@@ -38,6 +38,8 @@ This document covers:
 8. **Ownership** - Each project owns its plugin definitions
 9. **Discovery** - Central registry maintains discoverability
 10. **Industry Alignment** - Follows npm/PyPI/crates.io distribution patterns
+11. **Format Agnostic** - Plugins created in native framework format, no custom format required
+12. **Universal Orchestration** - Faber orchestrates agents from any framework with any model
 
 ### 1.3 Key Changes
 
@@ -52,6 +54,9 @@ This document covers:
 | **Versioning** | Independent versions | Plugin version tracks SDK version |
 | **Discovery** | Directory listing | Registry manifest |
 | **Third-party Pattern** | Unclear | "Create plugin in your SDK repo" |
+| **Plugin Format** | Custom format attempts | Native framework formats (Claude Code, LangChain, etc.) |
+| **Format Conversion** | CI/CD pipeline | Runtime adaptation by Faber when orchestrating |
+| **Orchestration** | Framework-specific | Universal (Faber adapts any format to LangGraph) |
 
 ## 2. Background & Motivation
 
@@ -168,52 +173,25 @@ fractary/core/                   # Primitive operations
 │   ├── src/server.ts
 │   └── package.json
 │
-├── plugins/                     # Plugin definitions (framework-organized)
-│   │
-│   ├── fractary/                # SOURCE (Fractary YAML - canonical)
-│   │   ├── registry.json        # Fractary plugin registry
-│   │   ├── work/
-│   │   │   ├── plugin.yaml
-│   │   │   ├── agents/
-│   │   │   │   └── work-manager/
-│   │   │   │       └── agent.yaml
-│   │   │   └── tools/
-│   │   │       └── issue-creator/
-│   │   │           └── tool.yaml
-│   │   ├── repo/
-│   │   ├── file/
-│   │   ├── spec/
-│   │   ├── docs/
-│   │   ├── logs/
-│   │   └── status/
-│   │
-│   ├── claude/                  # GENERATED (Claude Code format)
+├── plugins/                     # Plugin definitions (native formats)
+│   ├── .claude-plugin/
+│   │   └── marketplace.json     # Claude marketplace manifest
+│   ├── work/                    # Native Claude Code format
 │   │   ├── .claude-plugin/
-│   │   │   └── marketplace.json
-│   │   ├── work/
-│   │   │   ├── .claude-plugin/
-│   │   │   │   └── plugin.json
-│   │   │   ├── agents/
-│   │   │   │   └── work-manager.md
-│   │   │   ├── skills/
-│   │   │   │   └── issue-creator/
-│   │   │   │       └── SKILL.md
-│   │   │   └── commands/
-│   │   │       └── issue-fetch.md
-│   │   ├── repo/
-│   │   ├── file/
-│   │   ├── spec/
-│   │   ├── docs/
-│   │   ├── logs/
-│   │   └── status/
-│   │
-│   └── langchain/               # GENERATED (LangChain format, future)
-│       ├── work/
-│       │   ├── manifest.yaml
-│       │   └── agents/
-│       │       └── work_manager.py
-│       ├── repo/
-│       └── file/
+│   │   │   └── plugin.json
+│   │   ├── agents/
+│   │   │   └── work-manager.md
+│   │   ├── skills/
+│   │   │   └── issue-creator/
+│   │   │       └── SKILL.md
+│   │   └── commands/
+│   │       └── issue-fetch.md
+│   ├── repo/                    # Native Claude Code format
+│   ├── file/                    # Native Claude Code format
+│   ├── spec/                    # Native Claude Code format
+│   ├── docs/                    # Native Claude Code format
+│   ├── logs/                    # Native Claude Code format
+│   └── status/                  # Native Claude Code format
 │
 ├── package.json                 # Monorepo root
 └── pnpm-workspace.yaml
@@ -221,23 +199,21 @@ fractary/core/                   # Primitive operations
 fractary/faber/                  # Workflow orchestration
 ├── sdk/
 │   ├── js/                      # @fractary/faber
+│   │   └── src/adapters/        # Format adapters (Claude Code, LangChain, etc.)
 │   └── py/                      # fractary-faber
 ├── cli/                         # @fractary/faber-cli
 ├── mcp-server/                  # @fractary/faber-mcp-server
-├── plugins/
-│   ├── fractary/                # SOURCE (Fractary YAML)
-│   │   ├── registry.json
-│   │   ├── faber/
-│   │   ├── faber-cloud/
-│   │   └── faber-agent/
-│   ├── claude/                  # GENERATED (Claude Code)
+├── plugins/                     # Native Claude Code format
+│   ├── .claude-plugin/
+│   │   └── marketplace.json
+│   ├── faber/
 │   │   ├── .claude-plugin/
-│   │   │   └── marketplace.json
-│   │   ├── faber/
-│   │   ├── faber-cloud/
-│   │   └── faber-agent/
-│   └── langchain/               # GENERATED (future)
-│       └── faber/
+│   │   │   └── plugin.json
+│   │   ├── agents/
+│   │   │   └── faber-manager.md
+│   │   └── skills/
+│   ├── faber-cloud/
+│   └── faber-agent/
 └── package.json
 
 fractary/codex/                  # Knowledge management
@@ -246,16 +222,15 @@ fractary/codex/                  # Knowledge management
 │   └── py/                      # fractary-codex
 ├── cli/                         # @fractary/codex-cli
 ├── mcp-server/                  # @fractary/codex-mcp-server (exists)
-├── plugins/
-│   ├── fractary/                # SOURCE (Fractary YAML)
-│   │   ├── registry.json
-│   │   └── codex/
-│   ├── claude/                  # GENERATED (Claude Code)
-│   │   ├── .claude-plugin/
-│   │   │   └── marketplace.json
-│   │   └── codex/
-│   └── langchain/               # GENERATED (future)
-│       └── codex/
+├── plugins/                     # Native Claude Code format
+│   ├── .claude-plugin/
+│   │   └── marketplace.json
+│   └── codex/
+│       ├── .claude-plugin/
+│       │   └── plugin.json
+│       ├── agents/
+│       │   └── codex-manager.md
+│       └── skills/
 └── package.json
 ```
 
@@ -265,10 +240,12 @@ fractary/codex/                  # Knowledge management
 2. **Separate packages** - SDK, CLI, MCP server are distinct npm packages
 3. **Single CLI** - One CLI implementation (JavaScript) per SDK, no Python CLI
 4. **Single MCP server** - One MCP server (JavaScript) per SDK
-5. **Framework-organized plugins** - Plugins organized by target framework (`plugins/fractary/`, `plugins/claude/`, `plugins/langchain/`)
-6. **Fractary YAML as source** - `plugins/fractary/` is canonical, other formats generated
-7. **Generated files committed** - Framework-specific versions (Claude Code, LangChain) committed to repo for direct installation
+5. **Native framework formats** - Plugins created in native format (Claude Code, LangChain, etc.), no custom Fractary format
+6. **Format adapters in Faber** - Faber SDK contains adapters to understand any framework format
+7. **Runtime adaptation** - Translation happens at runtime when orchestrating, not build-time
 8. **No unified CLI** - Each SDK has its own CLI binary (`fractary-core`, `fractary-faber`, etc.)
+9. **Universal orchestration** - Faber can orchestrate agents from any framework with any model
+10. **Optional translation** - Forge provides translation tools for explicit format conversion when desired
 
 ### 3.2 Colocation Rationale
 
@@ -298,236 +275,327 @@ These plugins are **platform-agnostic primitives** that don't belong to any spec
 
 ### 3.3 Plugin Format Organization
 
-Plugins are organized by **target framework** within each SDK repository, with Fractary YAML as the canonical source:
+Plugins are maintained in their **native framework format** - no custom Fractary format required. Users create plugins in the framework they're familiar with.
 
 ```
 plugins/
-├── fractary/                    # SOURCE (Fractary YAML - canonical)
-│   ├── registry.json            # Fractary plugin registry
-│   └── work/
-│       ├── plugin.yaml          # Plugin manifest
-│       ├── agents/              # Agent definitions
-│       │   └── work-manager/
-│       │       └── agent.yaml
-│       └── tools/               # Tool definitions
-│           └── issue-creator/
-│               └── tool.yaml
-│
-├── claude/                      # GENERATED (Claude Code format)
+├── .claude-plugin/
+│   └── marketplace.json         # Claude marketplace manifest
+├── work/                        # Native Claude Code format
 │   ├── .claude-plugin/
-│   │   └── marketplace.json     # Claude marketplace manifest
-│   └── work/
-│       ├── .claude-plugin/
-│       │   └── plugin.json      # Claude plugin manifest
-│       ├── agents/
-│       │   └── work-manager.md  # Markdown format
-│       ├── skills/
-│       │   └── issue-creator/
-│       │       └── SKILL.md
-│       └── commands/
-│           └── issue-fetch.md
-│
-└── langchain/                   # GENERATED (LangChain format, future)
-    └── work/
-        ├── manifest.yaml
-        └── agents/
-            └── work_manager.py  # Python format
+│   │   └── plugin.json          # Claude plugin manifest
+│   ├── agents/
+│   │   └── work-manager.md      # Native markdown format
+│   ├── skills/
+│   │   └── issue-creator/
+│   │       └── SKILL.md
+│   └── commands/
+│       └── issue-fetch.md
+├── repo/                        # Native Claude Code format
+├── file/                        # Native Claude Code format
+└── ...
 ```
 
 **Organization principles:**
 
-1. **`plugins/fractary/`** - Source of truth
-   - Fractary YAML format (framework-agnostic)
-   - Manually edited
-   - Committed to version control
+1. **Single native format** - Plugins created in the framework the author knows best
+   - Fractary plugins currently use Claude Code format (markdown)
+   - Third-party plugins can use any format (Claude Code, LangChain, CrewAI, etc.)
+   - No custom "Fractary format" to learn
 
-2. **`plugins/claude/`** - Claude Code version
-   - Generated from Fractary YAML
-   - Markdown format (`.md` files)
-   - Committed to version control for direct installation
-   - Marked with generation metadata
+2. **Format detection** - Faber automatically detects format at runtime
+   - `.md` files with `.claude-plugin/` → Claude Code
+   - `.py` files with LangChain imports → LangChain
+   - `.py` files with CrewAI imports → CrewAI
+   - etc.
 
-3. **`plugins/langchain/`** - LangChain version (future)
-   - Generated from Fractary YAML
-   - Python format (`.py` files)
-   - Committed to version control
+3. **Runtime adaptation** - Translation happens when orchestrating
+   - Faber loads agent in native format
+   - Adapts to LangGraph/LangChain if needed for orchestration
+   - User never sees the translation
 
-**Why commit generated files?**
+**Why native formats?**
 
-- ✅ **Direct installation** - Users can install directly from GitHub
-- ✅ **Easy testing** - Real plugin files exist for each framework
-- ✅ **Better discoverability** - Can browse on GitHub
-- ✅ **No build step** - Users don't need conversion tools
+- ✅ **Zero learning curve** - Use format you already know
+- ✅ **No duplication** - Maintain one version (native)
+- ✅ **Direct installation** - Users install from GitHub as-is
+- ✅ **Easy testing** - No build step, no conversion
+- ✅ **Better discoverability** - Browse native format on GitHub
 
-### 3.4 Plugin Manifest Format (Fractary YAML)
+### 3.4 Faber Format Adapters
 
-The canonical plugin definition in `plugins/fractary/*/plugin.yaml`:
+Faber orchestration engine includes **format adapters** that understand agents from any mainstream framework. This enables universal orchestration without requiring format conversion.
 
-```yaml
-# plugins/fractary/work/plugin.yaml
-name: fractary-work
-version: 1.0.0
-description: Work item management across GitHub Issues, Jira, and Linear
-sdk_dependency:
-  package: "@fractary/core"
-  version: "^1.0.0"
+**Adapter architecture:**
 
-agents:
-  - work-manager
+```typescript
+// @fractary/faber/src/adapters/base.ts
+interface FormatAdapter {
+  name: string;
+  detect(path: string): boolean;
+  load(agentPath: string): Agent;
+  toLangGraph?(agent: Agent): LangGraphAgent;  // Only needed for orchestration
+}
 
-tools:
-  - issue-creator
-  - issue-fetcher
-  - comment-creator
-  - label-manager
-  - milestone-manager
-  # ... (18 tools total)
+// @fractary/faber/src/adapters/claude-code.ts
+class ClaudeCodeAdapter implements FormatAdapter {
+  name = 'claude-code';
 
-configuration:
-  schema: ./config/schema.json
-  example: ./config/config.example.json
-```
+  detect(path: string): boolean {
+    // Check for .claude-plugin directory and .md files
+    return fs.existsSync(join(path, '.claude-plugin/plugin.json')) &&
+           fs.existsSync(join(path, 'agents/*.md'));
+  }
 
-**Key fields:**
-- `name` - Plugin identifier (must match `fractary-{domain}` pattern)
-- `version` - Semantic version
-- `description` - Plugin description
-- `sdk_dependency` - Declares SDK version requirement
-- `agents` - References to agent definitions (in `agents/` directory)
-- `tools` - References to tool definitions (in `tools/` directory)
-- `configuration` - Config schema and examples
+  load(agentPath: string): Agent {
+    // Parse Claude Code markdown format
+    const content = fs.readFileSync(agentPath, 'utf-8');
+    return parseClaudeAgent(content);
+  }
 
-### 3.5 Generated Plugin Formats
-
-**Claude Code format** (`plugins/claude/work/.claude-plugin/plugin.json`):
-
-```json
-{
-  "_generated": {
-    "from": "../../fractary/work/plugin.yaml",
-    "at": "2025-12-16T12:00:00Z",
-    "by": "fractary-converter v1.0.0",
-    "warning": "DO NOT EDIT - Auto-generated from Fractary YAML"
-  },
-  "name": "fractary-work",
-  "version": "1.0.0",
-  "description": "Work item management across GitHub Issues, Jira, and Linear",
-  "agents": ["./agents/work-manager.md"],
-  "skills": "./skills/",
-  "commands": "./commands/"
+  toLangGraph(agent: Agent): LangGraphAgent {
+    // Convert Claude Code agent structure to LangGraph format
+    // Only called when actually orchestrating in LangGraph
+    return {
+      name: agent.name,
+      system: agent.context + agent.instructions,
+      tools: agent.tools,
+      // ... best-effort mapping
+    };
+  }
 }
 ```
 
-**LangChain format** (future - `plugins/langchain/work/manifest.yaml`):
+**Supported adapters:**
 
-```yaml
-# Auto-generated from ../../fractary/work/plugin.yaml
-name: fractary-work
-version: 1.0.0
-description: Work item management across GitHub Issues, Jira, and Linear
-agents:
-  - class: WorkManager
-    module: fractary_work.agents.work_manager
-tools:
-  - function: issue_creator
-    module: fractary_work.tools.issue_creator
+| Framework | Adapter | Detection | Status |
+|-----------|---------|-----------|--------|
+| Claude Code | `ClaudeCodeAdapter` | `.claude-plugin/` + `.md` files | ✅ Implemented |
+| LangChain | `LangChainAdapter` | `langchain` imports | 🔄 Planned |
+| CrewAI | `CrewAIAdapter` | `crewai` imports | 🔄 Planned |
+| Autogen | `AutogenAdapter` | `autogen` imports | 🔄 Planned |
+
+**Usage in Faber workflows:**
+
+```toml
+# .faber.config.toml
+[workflow.build]
+steps = [
+  # Claude Code agent with Claude model
+  { agent = "@claude:work-manager", model = "claude-sonnet-4" },
+
+  # LangChain agent with GPT-4 (future)
+  { agent = "@langchain:code-generator", model = "gpt-4" },
+
+  # Back to Claude Code agent with different model
+  { agent = "@claude:repo-manager", model = "gpt-4o" }
+]
 ```
 
-### 3.6 Build & Conversion Process
+**Automatic detection and adaptation:**
+1. User references agent: `@claude:work-manager`
+2. Faber loads `plugins/work/agents/work-manager.md`
+3. `ClaudeCodeAdapter.detect()` returns true
+4. `ClaudeCodeAdapter.load()` parses the agent
+5. If orchestrating in LangGraph: `ClaudeCodeAdapter.toLangGraph()` adapts
+6. Workflow executes with specified model (any model, regardless of original format)
 
-**Automated conversion via CI/CD:**
+### 3.5 Translation Limitations and Strategies
 
-```yaml
-# .github/workflows/convert-plugins.yml
-name: Convert Plugins
+Automatic format adaptation in Faber is **best-effort** and subject to framework capability differences.
 
-on:
-  push:
-    paths:
-      - 'plugins/fractary/**'
+**Translation Quality Matrix:**
 
-jobs:
-  convert:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+| From → To | Quality | Notes |
+|-----------|---------|-------|
+| Claude Code → LangGraph | ✅ Good | Most features map well |
+| LangChain → Claude Code | ⚠️ Lossy | Claude-specific features won't exist |
+| Claude Code → Simple LangChain | ⚠️ Feature loss | Advanced Claude features dropped |
+| Simple → Advanced | ℹ️ No-op | Nothing to translate "up" |
 
-      - name: Convert to Claude Code
-        run: |
-          fractary convert \
-            --from plugins/fractary \
-            --to plugins/claude \
-            --format claude-code
+**Downscaling (high → low functionality):**
+- Claude Code agents have rich features (hooks, status line, etc.)
+- When adapted to simpler frameworks, these features are dropped
+- User accepts this trade-off when choosing to run in simpler framework
+- Example: Claude Code skill with status line → LangChain (no status line)
 
-      - name: Convert to LangChain
-        run: |
-          fractary convert \
-            --from plugins/fractary \
-            --to plugins/langchain \
-            --format langchain
+**Upscaling (low → high functionality):**
+- Simple LangChain agent has basic functionality
+- When run in Claude Code, there's nothing to "translate up"
+- Original agent didn't define advanced features
+- Example: Basic LangChain agent → Claude Code (still basic, no extra features)
 
-      - name: Commit generated files
-        run: |
-          git add plugins/claude plugins/langchain
-          git commit -m "chore: regenerate plugin formats [skip ci]"
-          git push
-```
+**When to manually recreate:**
+- If you want full features of a framework, manually create separate version
+- Forge provides starter templates to jump-start conversion
+- Two separate artifacts, maintained independently
+- Example: Have both `@claude:work-manager` and `@langchain:work-manager` as separate plugins
 
-**Manual conversion:**
+**Faber's approach:**
+- Transparent adaptation for orchestration (user doesn't see it)
+- Best-effort feature mapping
+- Preserves core functionality (system prompt, tools, basic workflow)
+- Drops framework-specific features that don't translate
+
+### 3.6 Optional Translation Tools (Forge)
+
+For users who want to **explicitly convert** an agent to another framework format, Forge provides translation tools.
+
+**Forge translation CLI:**
 
 ```bash
-# Convert single plugin
-fractary convert \
-  --from plugins/fractary/work \
-  --to plugins/claude/work \
-  --format claude-code
+# Convert Claude Code agent to LangChain
+fractary-forge convert \
+  --from plugins/work/agents/work-manager.md \
+  --to work_manager.py \
+  --format langchain
 
-# Convert all plugins
-fractary convert \
-  --from plugins/fractary \
-  --to plugins/claude \
-  --format claude-code
+# Output: work_manager.py (LangChain agent)
+# Note: Feature loss warnings displayed
+```
+
+**When to use translation tools:**
+- You want a permanent version in another framework
+- You're migrating from one framework to another
+- You want to distribute plugin in multiple formats
+- You need to customize the translated version
+
+**When NOT to use translation tools:**
+- Just running agent with different model → Faber handles automatically
+- Orchestrating mixed frameworks → Faber handles automatically
+- Temporary experimentation → Runtime adaptation sufficient
+
+**Translation tool output:**
+```python
+# Generated by fractary-forge convert from work-manager.md
+# Original format: Claude Code
+# Target format: LangChain
+# Generated: 2025-12-16
+# WARNING: Some Claude Code features dropped (status line, hooks)
+
+from langchain.agents import Agent
+
+class WorkManager(Agent):
+    """Work item management agent"""
+
+    def __init__(self):
+        super().__init__(
+            name="work-manager",
+            system="You are a work item management assistant...",
+            # ... translated configuration
+        )
 ```
 
 ### 3.7 Installation Patterns
 
-**Fractary format** (canonical):
+**Native format installation** - Users install plugins directly in their native format.
 
-```bash
-# Via Fractary registry
-fractary install fractary-work
-
-# Direct from GitHub
-fractary install github:fractary/core/plugins/fractary/work
-```
-
-**Claude Code format**:
+**Claude Code plugins:**
 
 ```bash
 # Via Claude marketplace (looks for .claude-plugin/marketplace.json)
-claude plugins add-marketplace fractary/core/plugins/claude
+claude plugins add-marketplace fractary/core/plugins
 
 # Direct plugin install (looks for .claude-plugin/plugin.json)
-claude plugins install fractary/core/plugins/claude/work
+claude plugins install fractary/core/plugins/work
 ```
 
-**LangChain format** (future):
+**LangChain plugins** (third-party example):
 
 ```bash
 # Via pip package
-pip install fractary-langchain-work
+pip install acme-langchain-agents
 
 # Or direct from GitHub
-langchain plugins install fractary/core/plugins/langchain/work
+git clone https://github.com/acme/agents plugins/acme-agents
 ```
 
-**Standard locations enable predictable installation:**
+**Any framework:**
 
-- Claude Code: `.claude-plugin/` directory is standard
-- Fractary: `plugin.yaml` in plugin root
-- LangChain: `manifest.yaml` in plugin root
+```bash
+# Faber can reference installed plugins from any location
+# Configuration in .faber.config.toml specifies paths:
 
-### 3.8 Version Coherence Strategy
+[workflow.build]
+steps = [
+  { agent = "~/.claude/plugins/work/agents/work-manager.md" },     # Claude Code
+  { agent = "./plugins/acme-agents/code_generator.py" },           # LangChain
+  { agent = "../other-project/plugins/reviewer.md" }               # Claude Code
+]
+```
+
+**Standard locations by framework:**
+
+| Framework | Standard Location | Detection Marker |
+|-----------|------------------|------------------|
+| Claude Code | `~/.claude/plugins/` | `.claude-plugin/plugin.json` |
+| LangChain | Python site-packages | LangChain imports |
+| CrewAI | Python site-packages | CrewAI imports |
+| Custom | User-specified | Manual configuration |
+
+### 3.8 Value Proposition: Universal Orchestration
+
+**Tagline:** "Bring your agents. Use any model. Build workflows that work."
+
+Fractary's key differentiation is **universal orchestration** - not creating yet another agent framework, but making all frameworks work together.
+
+**The Problem Fractary Solves:**
+
+**Before Fractary:**
+- ❌ Locked into one framework (Claude Code, LangChain, CrewAI)
+- ❌ Can't mix agents from different frameworks
+- ❌ Locked into specific models (Claude for Claude Code agents, etc.)
+- ❌ Have to rewrite agents to switch frameworks
+- ❌ Can't orchestrate heterogeneous agents into workflows
+
+**With Fractary:**
+- ✅ Use agents from any framework without conversion
+- ✅ Mix Claude Code + LangChain + CrewAI agents in one workflow
+- ✅ Run any agent with any model (Claude Code agent with GPT-4, LangChain agent with Claude, etc.)
+- ✅ No rewriting needed - Faber adapts transparently
+- ✅ Orchestrate heterogeneous agents seamlessly
+
+**Real-World Example:**
+
+```toml
+# .faber.config.toml - Mix frameworks and models freely
+
+[workflow.build]
+steps = [
+  # Your Claude Code agent (proven, works well)
+  { agent = "@claude:work-manager", model = "claude-sonnet-4" },
+
+  # Teammate's LangChain agent (specialized for testing)
+  { agent = "@langchain:pytest-runner", model = "gpt-4" },
+
+  # Community CrewAI agent from GitHub (great at docs)
+  { agent = "@crewai:doc-writer", model = "llama-3.1" },
+
+  # Back to your Claude Code agent (but with different model for cost)
+  { agent = "@claude:repo-manager", model = "gpt-4o-mini" }
+]
+```
+
+**What Fractary Provides:**
+
+1. **Faber** - Universal orchestrator with format adapters
+2. **Forge** - Creation tools for any framework + optional translation
+3. **Stockyard** - Distribution of native-format agents with metadata
+4. **MCP Servers** - Universal primitives (work, repo, file) for all frameworks
+5. **Format Adapters** - Transparent runtime adaptation
+
+**What Fractary Is NOT:**
+- ❌ Not another agent definition format to learn
+- ❌ Not a framework replacement (use Claude Code, LangChain, etc. as-is)
+- ❌ Not opinionated about which framework is "best"
+
+**What Fractary IS:**
+- ✅ The orchestration layer that makes all frameworks interoperable
+- ✅ The model router that lets you use any model with any agent
+- ✅ The workflow engine that strings heterogeneous agents together
+- ✅ The toolkit that respects your framework choice
+
+### 3.9 Version Coherence Strategy
 
 **Plugin versions track SDK versions:**
 
@@ -1257,6 +1325,16 @@ Total: ~8 weeks
 - ✅ Familiar to external developers
 - ✅ Proven scalability
 
+**Format Agnostic Architecture (NEW):**
+- ✅ No custom format to learn - use Claude Code, LangChain, etc. directly
+- ✅ Zero learning curve for plugin creation
+- ✅ No duplication - single native version per plugin
+- ✅ No build pipeline - no conversion CI/CD needed
+- ✅ Direct installation - no build step for users
+- ✅ Universal orchestration - Faber works with any framework
+- ✅ Model flexibility - use any model with any agent
+- ✅ True interoperability - mix frameworks in one workflow
+
 ### 7.2 Trade-offs
 
 **Increased Repository Count:**
@@ -1265,7 +1343,7 @@ Total: ~8 weeks
 
 **Cross-Plugin Integration Testing:**
 - ⚠️ Testing plugins together requires multi-repo setup
-- Mitigation: E2E tests in CLI repository
+- Mitigation: E2E tests in Faber repository
 
 **Discovery Complexity:**
 - ⚠️ Users need registry to find plugins
@@ -1274,6 +1352,22 @@ Total: ~8 weeks
 **Migration Effort:**
 - ⚠️ Non-trivial migration work (8 weeks estimated)
 - Mitigation: Phased approach, backward compatibility
+
+**Translation Quality:**
+- ⚠️ Best-effort translation may lose framework-specific features
+- Mitigation:
+  - Transparent about limitations
+  - User chooses which framework to use
+  - Optional manual recreation via Forge tools for full features
+  - Same limitation exists in all approaches (manual or automatic)
+
+**Adapter Maintenance:**
+- ⚠️ Faber must maintain adapters for each framework
+- Mitigation:
+  - Adapters are isolated, single-responsibility modules
+  - Community can contribute adapters
+  - Only need adapters for mainstream frameworks
+  - Much simpler than maintaining conversions for all plugins
 
 ## 8. Architectural Decisions
 
@@ -1323,6 +1417,35 @@ Total: ~8 weeks
 **Q11: Universal naming convention?** ✅ **RESOLVED**
 - **Decision:** All packages/tools prefixed with `fractary-`
 - **Rationale:** Prevents naming conflicts (codex, helm, etc.), consistent, predictable
+
+**Q12: Should we create a custom Fractary agent/tool format?** ✅ **RESOLVED**
+- **Decision:** No - Use native framework formats (Claude Code, LangChain, etc.)
+- **Rationale:**
+  - Users already know their preferred framework
+  - No learning curve for new format
+  - No duplication (one version per plugin, in native format)
+  - Faber can adapt any format at runtime
+  - Reduces friction for adoption
+- **Original justification for Fractary format:** "Needed for Faber/LangGraph orchestration"
+- **Why that's wrong:** Faber can have format adapters instead of requiring canonical format
+
+**Q13: Should plugins be converted to multiple formats at build time or runtime?** ✅ **RESOLVED**
+- **Decision:** Runtime adaptation by Faber, not build-time conversion
+- **Rationale:**
+  - No CI/CD pipeline needed
+  - No generated files to maintain
+  - No duplication across framework directories
+  - Translation happens transparently when orchestrating
+  - Optional explicit conversion via Forge tools when desired
+- **Implication:** Each plugin exists in ONE native format, Faber adapts as needed
+
+**Q14: How to handle framework capability differences in translation?** ✅ **RESOLVED**
+- **Decision:** Best-effort translation, user accepts trade-offs
+- **Rationale:**
+  - Downscaling (Claude Code → simple framework): Feature loss is expected
+  - Upscaling (simple → Claude Code): Nothing to translate up
+  - Manual recreation available via Forge tools for full features
+  - This is the same outcome as all other approaches (manual or automatic)
 
 ### 8.2 Future Considerations
 
