@@ -1,0 +1,40 @@
+{
+  "version": "2.0",
+  "project": {
+    "issue_system": "github",
+    "repository": "fractary/plugins"
+  },
+  "handlers": {
+    "work-tracker": {
+      "active": "github",
+      "github": {
+        "owner": "fractary",
+        "repo": "plugins",
+        "api_url": "https://api.github.com",
+        "classification": {
+          "feature": ["feature", "enhancement", "story"],
+          "bug": ["bug", "fix", "defect"],
+          "chore": ["chore", "maintenance", "docs", "test", "refactor"],
+          "patch": ["hotfix", "patch", "urgent", "critical"]
+        },
+        "states": {
+          "open": "OPEN",
+          "in_progress": "OPEN",
+          "in_review": "OPEN",
+          "done": "CLOSED",
+          "closed": "CLOSED"
+        },
+        "labels": {
+          "prefix": "faber-",
+          "in_progress": "in-progress",
+          "in_review": "in-review",
+          "completed": "completed"
+        }
+      }
+    }
+  },
+  "defaults": {
+    "auto_assign": false,
+    "auto_label": true
+  }
+}

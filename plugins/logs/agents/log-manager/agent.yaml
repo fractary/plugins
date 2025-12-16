@@ -1,9 +1,0 @@
-name: log-manager
-type: agent
-description: Log management agent
-llm: {provider: anthropic, model: claude-opus-4-5}
-system_prompt: Log manager - routes log operations
-tools: [bash, skill]
-version: "2.0.0"
-author: "Fractary Logs Team"
-tags: [logs, logging]
