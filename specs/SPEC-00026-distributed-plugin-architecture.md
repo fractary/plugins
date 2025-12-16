@@ -168,14 +168,52 @@ fractary/core/                   # Primitive operations
 │   ├── src/server.ts
 │   └── package.json
 │
-├── plugins/                     # Claude Code plugins (not npm packages)
-│   ├── work/
-│   ├── repo/
-│   ├── file/
-│   ├── spec/
-│   ├── docs/
-│   ├── logs/
-│   └── status/
+├── plugins/                     # Plugin definitions (framework-organized)
+│   │
+│   ├── fractary/                # SOURCE (Fractary YAML - canonical)
+│   │   ├── registry.json        # Fractary plugin registry
+│   │   ├── work/
+│   │   │   ├── plugin.yaml
+│   │   │   ├── agents/
+│   │   │   │   └── work-manager/
+│   │   │   │       └── agent.yaml
+│   │   │   └── tools/
+│   │   │       └── issue-creator/
+│   │   │           └── tool.yaml
+│   │   ├── repo/
+│   │   ├── file/
+│   │   ├── spec/
+│   │   ├── docs/
+│   │   ├── logs/
+│   │   └── status/
+│   │
+│   ├── claude/                  # GENERATED (Claude Code format)
+│   │   ├── .claude-plugin/
+│   │   │   └── marketplace.json
+│   │   ├── work/
+│   │   │   ├── .claude-plugin/
+│   │   │   │   └── plugin.json
+│   │   │   ├── agents/
+│   │   │   │   └── work-manager.md
+│   │   │   ├── skills/
+│   │   │   │   └── issue-creator/
+│   │   │   │       └── SKILL.md
+│   │   │   └── commands/
+│   │   │       └── issue-fetch.md
+│   │   ├── repo/
+│   │   ├── file/
+│   │   ├── spec/
+│   │   ├── docs/
+│   │   ├── logs/
+│   │   └── status/
+│   │
+│   └── langchain/               # GENERATED (LangChain format, future)
+│       ├── work/
+│       │   ├── manifest.yaml
+│       │   └── agents/
+│       │       └── work_manager.py
+│       ├── repo/
+│       └── file/
 │
 ├── package.json                 # Monorepo root
 └── pnpm-workspace.yaml
@@ -187,9 +225,19 @@ fractary/faber/                  # Workflow orchestration
 ├── cli/                         # @fractary/faber-cli
 ├── mcp-server/                  # @fractary/faber-mcp-server
 ├── plugins/
-│   ├── faber/
-│   ├── faber-cloud/
-│   └── faber-agent/
+│   ├── fractary/                # SOURCE (Fractary YAML)
+│   │   ├── registry.json
+│   │   ├── faber/
+│   │   ├── faber-cloud/
+│   │   └── faber-agent/
+│   ├── claude/                  # GENERATED (Claude Code)
+│   │   ├── .claude-plugin/
+│   │   │   └── marketplace.json
+│   │   ├── faber/
+│   │   ├── faber-cloud/
+│   │   └── faber-agent/
+│   └── langchain/               # GENERATED (future)
+│       └── faber/
 └── package.json
 
 fractary/codex/                  # Knowledge management
@@ -199,7 +247,15 @@ fractary/codex/                  # Knowledge management
 ├── cli/                         # @fractary/codex-cli
 ├── mcp-server/                  # @fractary/codex-mcp-server (exists)
 ├── plugins/
-│   └── codex/
+│   ├── fractary/                # SOURCE (Fractary YAML)
+│   │   ├── registry.json
+│   │   └── codex/
+│   ├── claude/                  # GENERATED (Claude Code)
+│   │   ├── .claude-plugin/
+│   │   │   └── marketplace.json
+│   │   └── codex/
+│   └── langchain/               # GENERATED (future)
+│       └── codex/
 └── package.json
 ```
 
@@ -209,8 +265,10 @@ fractary/codex/                  # Knowledge management
 2. **Separate packages** - SDK, CLI, MCP server are distinct npm packages
 3. **Single CLI** - One CLI implementation (JavaScript) per SDK, no Python CLI
 4. **Single MCP server** - One MCP server (JavaScript) per SDK
-5. **Plugins stay together** - Claude Code plugins in same repo, not published to npm
-6. **No unified CLI** - Each SDK has its own CLI binary (`fractary-core`, `fractary-faber`, etc.)
+5. **Framework-organized plugins** - Plugins organized by target framework (`plugins/fractary/`, `plugins/claude/`, `plugins/langchain/`)
+6. **Fractary YAML as source** - `plugins/fractary/` is canonical, other formats generated
+7. **Generated files committed** - Framework-specific versions (Claude Code, LangChain) committed to repo for direct installation
+8. **No unified CLI** - Each SDK has its own CLI binary (`fractary-core`, `fractary-faber`, etc.)
 
 ### 3.2 Colocation Rationale
 
@@ -238,12 +296,75 @@ These plugins are **platform-agnostic primitives** that don't belong to any spec
 - Different teams/ownership
 - Larger scope justifies dedicated repository
 
-### 3.3 Plugin Manifest Format
+### 3.3 Plugin Format Organization
 
-Each plugin uses **Fractary YAML format** for framework-independent distribution:
+Plugins are organized by **target framework** within each SDK repository, with Fractary YAML as the canonical source:
+
+```
+plugins/
+├── fractary/                    # SOURCE (Fractary YAML - canonical)
+│   ├── registry.json            # Fractary plugin registry
+│   └── work/
+│       ├── plugin.yaml          # Plugin manifest
+│       ├── agents/              # Agent definitions
+│       │   └── work-manager/
+│       │       └── agent.yaml
+│       └── tools/               # Tool definitions
+│           └── issue-creator/
+│               └── tool.yaml
+│
+├── claude/                      # GENERATED (Claude Code format)
+│   ├── .claude-plugin/
+│   │   └── marketplace.json     # Claude marketplace manifest
+│   └── work/
+│       ├── .claude-plugin/
+│       │   └── plugin.json      # Claude plugin manifest
+│       ├── agents/
+│       │   └── work-manager.md  # Markdown format
+│       ├── skills/
+│       │   └── issue-creator/
+│       │       └── SKILL.md
+│       └── commands/
+│           └── issue-fetch.md
+│
+└── langchain/                   # GENERATED (LangChain format, future)
+    └── work/
+        ├── manifest.yaml
+        └── agents/
+            └── work_manager.py  # Python format
+```
+
+**Organization principles:**
+
+1. **`plugins/fractary/`** - Source of truth
+   - Fractary YAML format (framework-agnostic)
+   - Manually edited
+   - Committed to version control
+
+2. **`plugins/claude/`** - Claude Code version
+   - Generated from Fractary YAML
+   - Markdown format (`.md` files)
+   - Committed to version control for direct installation
+   - Marked with generation metadata
+
+3. **`plugins/langchain/`** - LangChain version (future)
+   - Generated from Fractary YAML
+   - Python format (`.py` files)
+   - Committed to version control
+
+**Why commit generated files?**
+
+- ✅ **Direct installation** - Users can install directly from GitHub
+- ✅ **Easy testing** - Real plugin files exist for each framework
+- ✅ **Better discoverability** - Can browse on GitHub
+- ✅ **No build step** - Users don't need conversion tools
+
+### 3.4 Plugin Manifest Format (Fractary YAML)
+
+The canonical plugin definition in `plugins/fractary/*/plugin.yaml`:
 
 ```yaml
-# plugins/work/plugin.yaml
+# plugins/fractary/work/plugin.yaml
 name: fractary-work
 version: 1.0.0
 description: Work item management across GitHub Issues, Jira, and Linear
@@ -268,12 +389,145 @@ configuration:
 ```
 
 **Key fields:**
+- `name` - Plugin identifier (must match `fractary-{domain}` pattern)
+- `version` - Semantic version
+- `description` - Plugin description
 - `sdk_dependency` - Declares SDK version requirement
-- `agents` - References to agent definitions
-- `tools` - References to tool definitions
+- `agents` - References to agent definitions (in `agents/` directory)
+- `tools` - References to tool definitions (in `tools/` directory)
 - `configuration` - Config schema and examples
 
-### 3.4 Version Coherence Strategy
+### 3.5 Generated Plugin Formats
+
+**Claude Code format** (`plugins/claude/work/.claude-plugin/plugin.json`):
+
+```json
+{
+  "_generated": {
+    "from": "../../fractary/work/plugin.yaml",
+    "at": "2025-12-16T12:00:00Z",
+    "by": "fractary-converter v1.0.0",
+    "warning": "DO NOT EDIT - Auto-generated from Fractary YAML"
+  },
+  "name": "fractary-work",
+  "version": "1.0.0",
+  "description": "Work item management across GitHub Issues, Jira, and Linear",
+  "agents": ["./agents/work-manager.md"],
+  "skills": "./skills/",
+  "commands": "./commands/"
+}
+```
+
+**LangChain format** (future - `plugins/langchain/work/manifest.yaml`):
+
+```yaml
+# Auto-generated from ../../fractary/work/plugin.yaml
+name: fractary-work
+version: 1.0.0
+description: Work item management across GitHub Issues, Jira, and Linear
+agents:
+  - class: WorkManager
+    module: fractary_work.agents.work_manager
+tools:
+  - function: issue_creator
+    module: fractary_work.tools.issue_creator
+```
+
+### 3.6 Build & Conversion Process
+
+**Automated conversion via CI/CD:**
+
+```yaml
+# .github/workflows/convert-plugins.yml
+name: Convert Plugins
+
+on:
+  push:
+    paths:
+      - 'plugins/fractary/**'
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Convert to Claude Code
+        run: |
+          fractary convert \
+            --from plugins/fractary \
+            --to plugins/claude \
+            --format claude-code
+
+      - name: Convert to LangChain
+        run: |
+          fractary convert \
+            --from plugins/fractary \
+            --to plugins/langchain \
+            --format langchain
+
+      - name: Commit generated files
+        run: |
+          git add plugins/claude plugins/langchain
+          git commit -m "chore: regenerate plugin formats [skip ci]"
+          git push
+```
+
+**Manual conversion:**
+
+```bash
+# Convert single plugin
+fractary convert \
+  --from plugins/fractary/work \
+  --to plugins/claude/work \
+  --format claude-code
+
+# Convert all plugins
+fractary convert \
+  --from plugins/fractary \
+  --to plugins/claude \
+  --format claude-code
+```
+
+### 3.7 Installation Patterns
+
+**Fractary format** (canonical):
+
+```bash
+# Via Fractary registry
+fractary install fractary-work
+
+# Direct from GitHub
+fractary install github:fractary/core/plugins/fractary/work
+```
+
+**Claude Code format**:
+
+```bash
+# Via Claude marketplace (looks for .claude-plugin/marketplace.json)
+claude plugins add-marketplace fractary/core/plugins/claude
+
+# Direct plugin install (looks for .claude-plugin/plugin.json)
+claude plugins install fractary/core/plugins/claude/work
+```
+
+**LangChain format** (future):
+
+```bash
+# Via pip package
+pip install fractary-langchain-work
+
+# Or direct from GitHub
+langchain plugins install fractary/core/plugins/langchain/work
+```
+
+**Standard locations enable predictable installation:**
+
+- Claude Code: `.claude-plugin/` directory is standard
+- Fractary: `plugin.yaml` in plugin root
+- LangChain: `manifest.yaml` in plugin root
+
+### 3.8 Version Coherence Strategy
 
 **Plugin versions track SDK versions:**
 
@@ -315,7 +569,7 @@ npm version minor  # Updates both @fractary/core and plugins/work/plugin.yaml
 # 4. Single PR includes both changes
 ```
 
-### 3.5 Universal Naming Convention
+### 3.9 Universal Naming Convention
 
 All Fractary packages, tools, commands, and binaries use a **consistent `fractary-` prefix** to prevent naming conflicts.
 
@@ -375,7 +629,7 @@ fractary-core work issue-fetch 123
 3. ✅ **Self-documenting** - Name indicates domain and action
 4. ✅ **Framework agnostic** - Works across all systems
 
-### 3.6 Multi-Language SDK Support
+### 3.10 Multi-Language SDK Support
 
 Each SDK repository provides implementations in **both JavaScript and Python** with language-neutral package names.
 
@@ -447,7 +701,7 @@ provider = GitHubWorkProvider(
 issue = provider.get_work_item('123')
 ```
 
-### 3.7 MCP Server Architecture
+### 3.11 MCP Server Architecture
 
 Each SDK provides a **Model Context Protocol (MCP) server** that exposes SDK functionality as tools for universal integration.
 
@@ -602,7 +856,7 @@ cli:
 | Branch + commit + PR | 2400ms | 450ms | 5.3x faster |
 | Full FABER workflow | 30s | 8s | 3.75x faster |
 
-### 3.8 Complete Package Matrix
+### 3.12 Complete Package Matrix
 
 | SDK | JavaScript (npm) | Python (pip) | CLI (npm) | MCP Server (npm) | Binary |
 |-----|-----------------|--------------|-----------|------------------|--------|
