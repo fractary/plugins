@@ -1,8 +1,8 @@
 name: handler-work-tracker-linear
 type: tool
-description: |
-  "[DEPRECATED] Linear handler - Use Fractary CLI instead"
+description: '"[DEPRECATED] Linear handler - Use Fractary CLI instead"
 
+  '
 input_schema:
   type: object
   properties:
@@ -10,18 +10,66 @@ input_schema:
       type: string
     parameters:
       type: object
-
 output_schema:
   type: object
   properties:
     status:
       type: string
-      enum: [success, failure]
+      enum:
+      - success
+      - failure
     result:
       type: object
-
 implementation:
-  type: skill-based
-  skill_directory: plugins/repo/skills/handler-work-tracker-linear
-  source_file: SKILL.md
+  type: embedded
   scripts_directory: scripts
+system_prompt: "---\nname: handler-work-tracker-linear\ndescription: \"[DEPRECATED]\
+  \ Linear handler - Use Fractary CLI instead\"\nmodel: haiku\nhandler_type: work-tracker\n\
+  platform: linear\ndeprecated: true\n---\n\n# Linear Work Tracker Handler\n\n> **⚠️\
+  \ DEPRECATED**: This handler is deprecated. Skills now use Fractary CLI (`fractary\
+  \ work <command>`) directly instead of platform-specific handlers.\n>\n> **Migration**:\
+  \ See `specs/WORK-00356-implement-faber-cli-work-commands.md` for the CLI migration\
+  \ plan.\n\n<CONTEXT>\nYou are the Linear handler for the work plugin. This handler\
+  \ is **DEPRECATED** as of the CLI migration.\n\n**New approach**: Skills invoke\
+  \ `fractary work <command> --json` directly instead of routing through platform-specific\
+  \ handlers.\n\n**Why deprecated**:\n1. CLI provides platform abstraction at a lower\
+  \ level\n2. Reduces context by eliminating handler layer\n3. Simplifies skill implementations\n\
+  4. Centralized maintenance in CLI codebase\n</CONTEXT>\n\n<CRITICAL_RULES>\n1. **DEPRECATED**\
+  \ - Do not use this handler for new implementations\n2. Skills should use Fractary\
+  \ CLI directly: `fractary work <command> --json`\n3. Existing scripts retained for\
+  \ backward compatibility only\n4. No new features will be added to this handler\n\
+  </CRITICAL_RULES>\n\n## Migration Guide\n\n### Before (Handler-based)\n```\nSkill\
+  \ → Handler → scripts/*.sh → Linear GraphQL API\n```\n\n### After (CLI-based)\n\
+  ```\nSkill → Fractary CLI → Linear GraphQL API\n```\n\n### Example Migration\n\n\
+  **Before (deprecated):**\n```bash\n# Skill invokes handler script\n./scripts/fetch-issue.sh\
+  \ TEAM-123\n```\n\n**After (recommended):**\n```bash\n# Skill invokes CLI directly\n\
+  fractary work issue fetch TEAM-123 --json\n```\n\n## CLI Command Mapping\n\n| Handler\
+  \ Operation | CLI Command | Status |\n|-------------------|-------------|--------|\n\
+  | fetch-issue | `fractary work issue fetch <id>` | ✅ Available |\n| create-issue\
+  \ | `fractary work issue create` | ✅ Available |\n| update-issue | `fractary work\
+  \ issue update <id>` | ✅ Available |\n| close-issue | `fractary work issue close\
+  \ <id>` | ✅ Available |\n| reopen-issue | `fractary work issue reopen <id>` | ❌\
+  \ Missing |\n| list-issues | `fractary work issue search` | ✅ Available |\n| create-comment\
+  \ | `fractary work comment create <id>` | ✅ Available |\n| list-comments | `fractary\
+  \ work comment list <id>` | ✅ Available |\n| add-label | `fractary work label add\
+  \ <id>` | ✅ Available |\n| remove-label | `fractary work label remove <id>` | ✅\
+  \ Available |\n| assign-issue | `fractary work issue assign <id>` | ❌ Missing |\n\
+  | classify-issue | `fractary work issue classify <id>` | ❌ Missing |\n\n## Backward\
+  \ Compatibility\n\nExisting scripts in `scripts/` are retained for:\n- Backward\
+  \ compatibility with old skill versions\n- Reference implementations for CLI development\n\
+  - Testing and validation\n\nScripts will be removed in a future major version once\
+  \ CLI migration is complete.\n\n## Dependencies (for legacy scripts)\n\n### Required\
+  \ Tools\n- `curl` - HTTP requests\n- `jq` - JSON processor\n\n### Environment Variables\n\
+  - `LINEAR_API_KEY` - Linear API key\n\n## Script Locations (Legacy)\n\n```\nhandler-work-tracker-linear/\n\
+  ├── SKILL.md (this file)\n├── scripts/                    # DEPRECATED - for backward\
+  \ compatibility only\n│   ├── fetch-issue.sh\n│   ├── classify-issue.sh\n│   ├──\
+  \ create-comment.sh\n│   ├── add-label.sh\n│   ├── remove-label.sh\n│   ├── close-issue.sh\n\
+  │   ├── reopen-issue.sh\n│   ├── update-state.sh\n│   ├── list-issues.sh\n│   └──\
+  \ ...\n└── docs/\n    └── linear-api.md\n```\n\n## Linear-Specific Notes (Reference)\n\
+  \n### Authentication\nLinear uses Bearer token authentication with API key.\n\n\
+  ### Issue Identifiers\nFormat: `TEAM-NUMBER` (e.g., ENG-123) or UUIDs internally.\n\
+  \n### GraphQL API\nLinear uses GraphQL for all operations.\n\n### UUID Lookups\n\
+  Labels, states, and users are referenced by UUID. Scripts must lookup UUIDs by name.\n\
+  \n## See Also\n\n- `specs/WORK-00356-implement-faber-cli-work-commands.md` - CLI\
+  \ migration spec\n- `specs/WORK-00356-1-missing-cli-work-commands.md` - Missing\
+  \ CLI commands\n- `plugins/work/skills/cli-helper/SKILL.md` - CLI invocation patterns\n"

@@ -1,8 +1,9 @@
 name: doc-lister
 type: tool
-description: |
-  Lists and filters documentation files by type, status, tags, and date range with frontmatter parsing
+description: 'Lists and filters documentation files by type, status, tags, and date
+  range with frontmatter parsing
 
+  '
 input_schema:
   type: object
   properties:
@@ -10,18 +11,35 @@ input_schema:
       type: string
     parameters:
       type: object
-
 output_schema:
   type: object
   properties:
     status:
       type: string
-      enum: [success, failure]
+      enum:
+      - success
+      - failure
     result:
       type: object
-
 implementation:
-  type: skill-based
-  skill_directory: plugins/repo/skills/doc-lister
-  source_file: SKILL.md
+  type: embedded
   scripts_directory: scripts
+system_prompt: "---\nname: doc-lister\ndescription: Lists and filters documentation\
+  \ files by type, status, tags, and date range with frontmatter parsing\nmodel: claude-haiku-4-5\n\
+  ---\n\n# doc-lister\n\n<CONTEXT>\n**Purpose**: List and filter documentation files.\n\
+  \n**Architecture**: Operation-specific skill (Layer 3)\n</CONTEXT>\n\n<CRITICAL_RULES>\n\
+  - ALWAYS scan specified directory\n- ALWAYS parse frontmatter for filtering\n- NEVER\
+  \ modify files\n- ALWAYS return structured list\n</CRITICAL_RULES>\n\n<INPUTS>\n\
+  Required:\n- `path` - Directory to scan (default: docs/)\n\nOptional filters:\n\
+  - `doc_type` - Filter by fractary_doc_type\n- `status` - Filter by status (draft,\
+  \ published, deprecated)\n- `tags` - Filter by tags (array)\n- `date_range` - Filter\
+  \ by created/updated dates\n</INPUTS>\n\n<WORKFLOW>\n1. **Scan Directory**\n   -\
+  \ Find all README.md files recursively\n   - Exclude node_modules, .git, etc.\n\n\
+  2. **Parse Frontmatter**\n   - Extract YAML frontmatter from each file\n   - Build\
+  \ document list with metadata\n\n3. **Apply Filters**\n   - Filter by doc_type if\
+  \ specified\n   - Filter by status if specified\n   - Filter by tags if specified\n\
+  \   - Filter by date range if specified\n\n4. **Return List**\n```json\n{\n  \"\
+  total\": 42,\n  \"filtered\": 15,\n  \"documents\": [\n    {\n      \"path\": \"\
+  docs/api/auth/login/README.md\",\n      \"title\": \"Login Endpoint\",\n      \"\
+  doc_type\": \"api\",\n      \"status\": \"published\",\n      \"version\": \"1.2.0\"\
+  ,\n      \"updated\": \"2025-01-15\"\n    }\n  ]\n}\n```\n</WORKFLOW>\n"

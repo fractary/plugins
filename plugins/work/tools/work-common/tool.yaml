@@ -1,8 +1,8 @@
 name: work-common
 type: tool
-description: |
-  Common utilities for work plugin operations
+description: 'Common utilities for work plugin operations
 
+  '
 input_schema:
   type: object
   properties:
@@ -10,18 +10,95 @@ input_schema:
       type: string
     parameters:
       type: object
-
 output_schema:
   type: object
   properties:
     status:
       type: string
-      enum: [success, failure]
+      enum:
+      - success
+      - failure
     result:
       type: object
-
 implementation:
-  type: skill-based
-  skill_directory: plugins/repo/skills/work-common
-  source_file: SKILL.md
+  type: embedded
   scripts_directory: scripts
+system_prompt: "---\nname: work-common\ndescription: Common utilities for work plugin\
+  \ operations\nmodel: claude-haiku-4-5\ntype: library\n---\n\n# Work Common Utilities\n\
+  \n<CONTEXT>\nYou are the work-common utilities library providing shared helper functions\
+  \ for the work plugin. You are NOT invoked like other skills - instead, other skills\
+  \ and handlers call your scripts directly via Bash.\n\nThis library provides:\n\
+  - Configuration loading and validation\n- Data normalization across platforms (future)\n\
+  - Input validation helpers (future)\n- Standard error code definitions (future)\n\
+  </CONTEXT>\n\n<CRITICAL_RULES>\n1. NEVER invoke this as a skill through work-manager\n\
+  2. ALWAYS use these utilities as Bash scripts called directly\n3. ALWAYS validate\
+  \ inputs in utility scripts\n4. ALWAYS output structured data (JSON where applicable)\n\
+  5. ALWAYS use standard error codes consistently\n</CRITICAL_RULES>\n\n<UTILITIES>\n\
+  \n## config-loader.sh\n\n**Purpose:** Load and validate work plugin configuration\n\
+  \n**Location:** `plugins/work/skills/work-common/scripts/config-loader.sh`\n\n**Usage:**\n\
+  ```bash\nCONFIG_JSON=$(./plugins/work/skills/work-common/scripts/config-loader.sh)\
+  \ || exit $?\nPLATFORM=$(echo \"$CONFIG_JSON\" | jq -r '.handlers[\"work-tracker\"\
+  ].active')\n```\n\n**Returns:** Full configuration JSON to stdout\n\n**Exit Codes:**\n\
+  - 0: Success - configuration loaded and valid\n- 3: Validation error - config not\
+  \ found or invalid JSON\n\n**CRITICAL**: Configuration must be loaded from the **project\
+  \ working directory**, NOT the plugin installation directory.\n\n**Configuration\
+  \ Location:** `.fractary/plugins/work/config.json` (relative to project root / current\
+  \ working directory)\n\n**Common Mistake:** Do NOT look in `~/.claude/plugins/marketplaces/fractary/plugins/work/`\
+  \ - that's the plugin installation directory, not the project config location.\n\
+  \n**Special Behavior:** When config doesn't exist, the work plugin uses auto-detection\
+  \ (e.g., gh CLI automatically detects the repository). Skills can check if config\
+  \ exists and recommend running `/work:init` to persist settings.\n\n**Example:**\n\
+  ```bash\n# Load configuration\nif ! CONFIG_JSON=$(./plugins/work/skills/work-common/scripts/config-loader.sh\
+  \ 2>&1); then\n    echo \"Error: Failed to load configuration\" >&2\n    exit 3\n\
+  fi\n\n# Extract platform-specific settings\nPLATFORM=$(echo \"$CONFIG_JSON\" | jq\
+  \ -r '.handlers[\"work-tracker\"].active')\nGITHUB_OWNER=$(echo \"$CONFIG_JSON\"\
+  \ | jq -r '.handlers[\"work-tracker\"].github.owner')\nGITHUB_REPO=$(echo \"$CONFIG_JSON\"\
+  \ | jq -r '.handlers[\"work-tracker\"].github.repo')\n```\n\n## check-config-exists.sh\n\
+  \n**Purpose:** Check if work plugin configuration file exists\n\n**Location:** `plugins/work/skills/work-common/scripts/check-config-exists.sh`\n\
+  \n**Usage:**\n```bash\nif [ -f \".fractary/plugins/work/config.json\" ]; then\n\
+  \    # Config exists\nelse\n    # Show recommendation to run /work:init\nfi\n```\n\
+  \n**Returns:** Exit code 0 if config exists, 1 if not\n\n**Use Case:** Skills can\
+  \ check config existence and include init recommendation in completion messages\
+  \ when config doesn't exist.\n\n## normalize-issue.sh (FUTURE)\n\n**Purpose:** Normalize\
+  \ platform-specific issue JSON to universal format\n\n**Status:** Not yet implemented\
+  \ - placeholder for Phase 5+\n\n**Planned Usage:**\n```bash\nNORMALIZED=$(./plugins/work/skills/work-common/scripts/normalize-issue.sh\
+  \ \"$PLATFORM\" \"$ISSUE_JSON\")\n```\n\n## validate-issue-id.sh (FUTURE)\n\n**Purpose:**\
+  \ Validate issue ID format for specific platform\n\n**Status:** Not yet implemented\
+  \ - placeholder for Phase 5+\n\n**Planned Usage:**\n```bash\n./plugins/work/skills/work-common/scripts/validate-issue-id.sh\
+  \ \"github\" \"123\"\n```\n\n## error-codes.sh (FUTURE)\n\n**Purpose:** Centralized\
+  \ error code definitions and lookup\n\n**Status:** Not yet implemented - placeholder\
+  \ for Phase 5+\n\n**Planned Usage:**\n```bash\nsource ./plugins/work/skills/work-common/scripts/error-codes.sh\n\
+  exit $ERR_NOT_FOUND\n```\n\n</UTILITIES>\n\n<ERROR_CODES>\n\nStandard error codes\
+  \ used across all work plugin utilities:\n\n- **0** - Success\n- **1** - General\
+  \ error\n- **2** - Invalid arguments\n- **3** - Validation error (config, input\
+  \ format)\n- **10** - Resource not found (issue, milestone, etc.)\n- **11** - Authentication\
+  \ error\n- **12** - Network error\n\n</ERROR_CODES>\n\n## Dependencies\n\n- `jq`\
+  \ - JSON processing\n- `bash` 4.0+ - Shell features\n- Platform-specific CLIs:\n\
+  \  - `gh` for GitHub\n  - `jira` for Jira\n  - `linear` for Linear\n\n## Configuration\
+  \ Structure\n\n**CRITICAL**: Configuration must be loaded from the **project working\
+  \ directory**, NOT the plugin installation directory.\n\nExpected configuration\
+  \ file at `.fractary/plugins/work/config.json` (relative to project root / current\
+  \ working directory):\n\n```json\n{\n  \"version\": \"2.0\",\n  \"project\": {\n\
+  \    \"issue_system\": \"github\",\n    \"repository\": \"owner/repo\"\n  },\n \
+  \ \"handlers\": {\n    \"work-tracker\": {\n      \"active\": \"github\",\n    \
+  \  \"github\": {\n        \"owner\": \"myorg\",\n        \"repo\": \"my-project\"\
+  ,\n        \"api_url\": \"https://api.github.com\"\n      }\n    }\n  }\n}\n```\n\
+  \nSee `plugins/work/config/config.example.json` for complete configuration template.\n\
+  \n## Testing\n\n### Test config-loader.sh\n\n```bash\n# Test successful load\ncd\
+  \ /mnt/c/GitHub/fractary/claude-plugins\n./plugins/work/skills/work-common/scripts/config-loader.sh\n\
+  # Expected: Outputs valid JSON configuration\n\n# Test missing config\nmv .fractary/plugins/work/config.json\
+  \ .fractary/plugins/work/config.json.bak\n./plugins/work/skills/work-common/scripts/config-loader.sh\n\
+  # Expected: Exit code 3, error message \"Configuration file not found\"\n\n# Test\
+  \ invalid JSON\necho \"{ invalid json\" > .fractary/plugins/work/config.json\n./plugins/work/skills/work-common/scripts/config-loader.sh\n\
+  # Expected: Exit code 3, error message \"Invalid JSON\"\n```\n\n## Integration\n\
+  \nOther skills and handlers integrate work-common utilities like this:\n\n```bash\n\
+  #!/bin/bash\n# Example handler script\n\nset -euo pipefail\n\n# Load configuration\
+  \ using work-common utility\nSCRIPT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\"\
+  )\" && pwd)\"\nWORK_COMMON_DIR=\"$SCRIPT_DIR/../../work-common/scripts\"\n\nCONFIG_JSON=$(\"\
+  $WORK_COMMON_DIR/config-loader.sh\") || exit $?\n\n# Extract configuration values\n\
+  PLATFORM=$(echo \"$CONFIG_JSON\" | jq -r '.handlers[\"work-tracker\"].active')\n\
+  \n# Continue with operation...\n```\n\n## Future Enhancements\n\n- **normalize-issue.sh**\
+  \ - Standardize issue data across GitHub, Jira, Linear\n- **validate-issue-id.sh**\
+  \ - Platform-specific ID format validation\n- **error-codes.sh** - Shared error\
+  \ code constants\n- **cache-helper.sh** - Optional caching for repeated API calls\n\
+  - **auth-checker.sh** - Verify platform authentication before operations\n"
