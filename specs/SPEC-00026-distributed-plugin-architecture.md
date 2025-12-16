@@ -17,6 +17,10 @@ This document covers:
 - Migration from centralized `fractary/plugins` repository to distributed repositories
 - Repository structure for domain-specific plugin hosting
 - Plugin colocation patterns (plugins living with their SDKs)
+- **Multi-language SDK support** (JavaScript and Python)
+- **MCP server architecture** per SDK for universal tool access
+- **CLI architecture** as separate package per SDK
+- **Universal naming convention** with `fractary-` prefix
 - Registry system for plugin discovery and distribution
 - Versioning strategy for SDK-plugin coherence
 - Third-party plugin development model
@@ -26,16 +30,24 @@ This document covers:
 
 1. **Colocation** - Plugins live with the code they wrap for easier synchronization
 2. **Version Coherence** - Plugin versions track SDK versions naturally
-3. **Third-party Model** - Clear, replicable pattern for external plugin developers
-4. **Ownership** - Each project owns its plugin definitions
-5. **Discovery** - Central registry maintains discoverability
-6. **Industry Alignment** - Follows npm/PyPI/crates.io distribution patterns
+3. **Multi-Language Support** - SDKs available in JavaScript and Python
+4. **MCP-First Integration** - MCP servers provide universal tool access across frameworks
+5. **Universal Naming** - Consistent `fractary-` prefix prevents conflicts
+6. **Separation of Concerns** - CLI, SDK, and MCP server as separate packages
+7. **Third-party Model** - Clear, replicable pattern for external plugin developers
+8. **Ownership** - Each project owns its plugin definitions
+9. **Discovery** - Central registry maintains discoverability
+10. **Industry Alignment** - Follows npm/PyPI/crates.io distribution patterns
 
 ### 1.3 Key Changes
 
 | Aspect | Current (Centralized) | Proposed (Distributed) |
 |--------|----------------------|------------------------|
 | **Plugin Location** | `fractary/plugins` (all plugins) | `fractary/core/plugins`, `fractary/faber/plugins`, `fractary/codex/plugins` |
+| **SDK Languages** | JavaScript only | JavaScript + Python |
+| **Integration Layer** | CLI only | MCP servers (primary) + CLI (fallback) |
+| **Package Structure** | Monolithic | Separate packages (SDK, CLI, MCP server) |
+| **Naming Convention** | Inconsistent | Universal `fractary-` prefix |
 | **SDK-Plugin Sync** | Cross-repo coordination | Same PR updates both |
 | **Versioning** | Independent versions | Plugin version tracks SDK version |
 | **Discovery** | Directory listing | Registry manifest |
@@ -121,47 +133,84 @@ Successful package ecosystems use distributed repositories with central registri
 
 ### 3.1 Repository Structure
 
-Plugins will be distributed across domain-specific repositories:
+Plugins, SDKs, CLIs, and MCP servers will be colocated in domain-specific monorepos:
 
 ```
-fractary/core                    # Primitive operations
-├── packages/
-│   ├── work/                    # Work tracking SDK
-│   ├── repo/                    # Source control SDK
-│   ├── file/                    # File storage SDK
-│   ├── spec/                    # Specification SDK
-│   ├── docs/                    # Documentation SDK
-│   └── logs/                    # Logging SDK
-└── plugins/
-    ├── work/                    # Work plugin (wraps work SDK)
-    ├── repo/                    # Repo plugin (wraps repo SDK)
-    ├── file/                    # File plugin (wraps file SDK)
-    ├── spec/                    # Spec plugin (wraps spec SDK)
-    ├── docs/                    # Docs plugin (wraps docs SDK)
-    ├── logs/                    # Logs plugin (wraps logs SDK)
-    └── status/                  # Status display plugin
+fractary/core/                   # Primitive operations
+├── sdk/
+│   ├── js/                      # JavaScript SDK → @fractary/core
+│   │   ├── src/
+│   │   │   ├── work/
+│   │   │   ├── repo/
+│   │   │   ├── file/
+│   │   │   ├── spec/
+│   │   │   ├── docs/
+│   │   │   └── logs/
+│   │   └── package.json
+│   │
+│   └── py/                      # Python SDK → fractary-core
+│       ├── fractary_core/
+│       │   ├── work/
+│       │   ├── repo/
+│       │   ├── file/
+│       │   ├── spec/
+│       │   ├── docs/
+│       │   └── logs/
+│       └── pyproject.toml
+│
+├── cli/                         # CLI → @fractary/core-cli (JavaScript)
+│   ├── src/commands/
+│   ├── bin/fractary-core
+│   └── package.json
+│
+├── mcp-server/                  # MCP Server → @fractary/core-mcp-server (JavaScript)
+│   ├── src/tools/
+│   ├── src/server.ts
+│   └── package.json
+│
+├── plugins/                     # Claude Code plugins (not npm packages)
+│   ├── work/
+│   ├── repo/
+│   ├── file/
+│   ├── spec/
+│   ├── docs/
+│   ├── logs/
+│   └── status/
+│
+├── package.json                 # Monorepo root
+└── pnpm-workspace.yaml
 
-fractary/faber                   # Workflow orchestration
-├── packages/
-│   └── faber/                   # Faber SDK
-└── plugins/
-    ├── faber/                   # Core FABER plugin
-    ├── faber-cloud/             # Cloud infrastructure plugin
-    └── faber-agent/             # Plugin creation meta-tooling
+fractary/faber/                  # Workflow orchestration
+├── sdk/
+│   ├── js/                      # @fractary/faber
+│   └── py/                      # fractary-faber
+├── cli/                         # @fractary/faber-cli
+├── mcp-server/                  # @fractary/faber-mcp-server
+├── plugins/
+│   ├── faber/
+│   ├── faber-cloud/
+│   └── faber-agent/
+└── package.json
 
-fractary/codex                   # Knowledge management
-├── mcp-server/                  # Codex MCP server
-├── sdk/                         # Codex SDK (if separate)
-└── plugins/
-    └── codex/                   # Codex plugin
-
-fractary/cli                     # Execution layer
-├── src/
-│   ├── commands/                # CLI commands
-│   └── runtime/                 # Execution engine
-└── config/
-    └── registry.json            # Plugin registry manifest
+fractary/codex/                  # Knowledge management
+├── sdk/
+│   ├── js/                      # @fractary/codex
+│   └── py/                      # fractary-codex
+├── cli/                         # @fractary/codex-cli
+├── mcp-server/                  # @fractary/codex-mcp-server (exists)
+├── plugins/
+│   └── codex/
+└── package.json
 ```
+
+**Key architectural decisions:**
+
+1. **Multi-language SDKs** - Both JavaScript and Python in each repo
+2. **Separate packages** - SDK, CLI, MCP server are distinct npm packages
+3. **Single CLI** - One CLI implementation (JavaScript) per SDK, no Python CLI
+4. **Single MCP server** - One MCP server (JavaScript) per SDK
+5. **Plugins stay together** - Claude Code plugins in same repo, not published to npm
+6. **No unified CLI** - Each SDK has its own CLI binary (`fractary-core`, `fractary-faber`, etc.)
 
 ### 3.2 Colocation Rationale
 
@@ -264,6 +313,317 @@ git commit -m "feat(work-plugin): add bulk-update tool"
 npm version minor  # Updates both @fractary/core and plugins/work/plugin.yaml
 
 # 4. Single PR includes both changes
+```
+
+### 3.5 Universal Naming Convention
+
+All Fractary packages, tools, commands, and binaries use a **consistent `fractary-` prefix** to prevent naming conflicts.
+
+#### Naming Matrix
+
+| Interface | Pattern | Example | Separator |
+|-----------|---------|---------|-----------|
+| **npm package (SDK)** | `@fractary/{domain}` | `@fractary/core` | `/` (scope) |
+| **pip package (SDK)** | `fractary-{domain}` | `fractary-core` | `-` (hyphen) |
+| **npm package (CLI)** | `@fractary/{domain}-cli` | `@fractary/core-cli` | `-` (hyphen) |
+| **npm package (MCP)** | `@fractary/{domain}-mcp-server` | `@fractary/core-mcp-server` | `-` (hyphen) |
+| **CLI binary** | `fractary-{domain}` | `fractary-core` | `-` (hyphen) |
+| **MCP server name** | `fractary-{domain}` | `fractary-core` | `-` (hyphen) |
+| **MCP tool name** | `fractary_{domain}_{action}` | `fractary_work_issue_fetch` | `_` (underscore) |
+| **CLI command** | `fractary-{domain} {action}` | `fractary-core work issue-fetch` | ` ` (space) |
+| **Plugin name** | `fractary-{domain}` | `fractary-work` | `-` (hyphen) |
+| **Plugin command** | `/fractary-{domain}:{action}` | `/fractary-work:issue-fetch` | `:` (colon) |
+| **Agent reference** | `@agent-fractary-{domain}:{name}` | `@agent-fractary-work:manager` | `:` (colon) |
+
+**Why different separators?**
+- Each interface has established conventions (MCP uses `_`, CLI uses spaces, plugins use `:`)
+- The **stem is always `fractary-{domain}`** providing consistency
+- Predictable transformation between interfaces
+
+#### Cross-Interface Examples
+
+**Work issue fetch across all interfaces:**
+
+```bash
+# npm installation
+npm install @fractary/core                    # JavaScript SDK
+pip install fractary-core                     # Python SDK
+npm install -g @fractary/core-cli             # CLI
+
+# MCP server configuration
+"fractary-core": {
+  "command": "npx",
+  "args": ["-y", "@fractary/core-mcp-server"]
+}
+
+# MCP tool invocation
+fractary_work_issue_fetch(issue_number="123")
+
+# CLI usage
+fractary-core work issue-fetch 123
+
+# Plugin command
+/fractary-work:issue-fetch 123
+
+# Agent reference (in plugin)
+@agent-fractary-work:manager
+```
+
+**Benefits:**
+1. ✅ **No conflicts** - `fractary` prefix prevents collision with existing tools
+2. ✅ **Predictable** - Know one format, infer the others
+3. ✅ **Self-documenting** - Name indicates domain and action
+4. ✅ **Framework agnostic** - Works across all systems
+
+### 3.6 Multi-Language SDK Support
+
+Each SDK repository provides implementations in **both JavaScript and Python** with language-neutral package names.
+
+#### Directory Structure
+
+```
+sdk/
+├── js/                          # JavaScript/TypeScript SDK
+│   ├── src/
+│   │   ├── work/
+│   │   ├── repo/
+│   │   └── file/
+│   ├── package.json             # @fractary/core
+│   ├── tsconfig.json
+│   └── README.md
+│
+└── py/                          # Python SDK
+    ├── fractary_core/           # Package directory (underscore)
+    │   ├── __init__.py
+    │   ├── work/
+    │   ├── repo/
+    │   └── file/
+    ├── tests/
+    ├── pyproject.toml           # fractary-core (hyphen in pip)
+    ├── setup.py
+    └── README.md
+```
+
+#### Package Naming
+
+| Language | Package Manager | Package Name | Import Statement |
+|----------|----------------|--------------|------------------|
+| **JavaScript** | npm | `@fractary/core` | `import { createWorkItem } from '@fractary/core/work'` |
+| **Python** | pip | `fractary-core` | `from fractary_core.work import create_work_item` |
+
+**Key points:**
+- **Language-neutral names** - Not `core-sdk`, just `core`
+- **Python conventions** - Underscore in code (`fractary_core/`), hyphen in pip (`fractary-core`)
+- **Consistent API** - Both languages expose same functionality
+- **Independent versioning** - Can have different versions if needed, but typically stay in sync
+
+#### Installation & Usage
+
+**JavaScript:**
+```bash
+npm install @fractary/core
+```
+```typescript
+import { WorkProvider } from '@fractary/core/work';
+
+const provider = new GitHubWorkProvider({
+  token: process.env.GITHUB_TOKEN
+});
+
+const issue = await provider.getWorkItem('123');
+```
+
+**Python:**
+```bash
+pip install fractary-core
+```
+```python
+from fractary_core.work import GitHubWorkProvider
+
+provider = GitHubWorkProvider(
+    token=os.getenv('GITHUB_TOKEN')
+)
+
+issue = provider.get_work_item('123')
+```
+
+### 3.7 MCP Server Architecture
+
+Each SDK provides a **Model Context Protocol (MCP) server** that exposes SDK functionality as tools for universal integration.
+
+#### Why MCP Servers?
+
+**MCP servers provide:**
+1. **Universal tool access** - Works with Claude Code, LangChain, n8n, and any MCP client
+2. **No framework lock-in** - Fractary YAML definitions don't need framework-specific ports
+3. **Efficient integration** - Direct function calls, no subprocess overhead
+4. **Streaming support** - Can stream large responses
+5. **Stateful operations** - Server maintains context across calls
+
+#### MCP vs Plugins vs CLI
+
+| Feature | MCP Server | Claude Code Plugin | CLI |
+|---------|------------|-------------------|-----|
+| **Atomic operations** | ✅ Primary | ✅ Via MCP or CLI | ✅ Fallback |
+| **Multi-step workflows** | ❌ | ✅ Agents | ❌ |
+| **Natural language commands** | ❌ | ✅ `/fractary-work:start 123` | ❌ |
+| **Event hooks** | ❌ | ✅ Auto-execution | ❌ |
+| **Universal compatibility** | ✅ Any MCP client | ❌ Claude Code only | ✅ Any shell |
+| **Performance** | ✅ Fast (direct calls) | ✅ Fast (via MCP) | ❌ Slow (subprocess) |
+| **UI elements** | ❌ | ✅ Status line, prompts | ❌ |
+
+**Conclusion:** All three are needed:
+- **MCP** for efficient tool access
+- **Plugins** for orchestration and UX
+- **CLI** for human users and CI/CD
+
+#### MCP Server Structure
+
+```
+mcp-server/                      # @fractary/core-mcp-server
+├── src/
+│   ├── tools/
+│   │   ├── work.ts              # Work tracking tools
+│   │   │   └── fractary_work_issue_fetch()
+│   │   │   └── fractary_work_issue_create()
+│   │   ├── repo.ts              # Repository tools
+│   │   │   └── fractary_repo_branch_create()
+│   │   │   └── fractary_repo_commit()
+│   │   └── file.ts              # File storage tools
+│   │       └── fractary_file_upload()
+│   │       └── fractary_file_download()
+│   ├── server.ts                # MCP server entry point
+│   └── index.ts
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+#### Tool Definition Example
+
+```typescript
+// mcp-server/src/tools/work.ts
+import { createWorkItem } from '@fractary/core/work';
+
+export const fractary_work_issue_create = {
+  name: 'fractary_work_issue_create',
+  description: 'Create a new work item (issue, ticket, task)',
+  inputSchema: {
+    type: 'object',
+    required: ['title'],
+    properties: {
+      title: {
+        type: 'string',
+        description: 'Issue title'
+      },
+      description: {
+        type: 'string',
+        description: 'Issue description'
+      },
+      type: {
+        type: 'string',
+        enum: ['feature', 'bug', 'chore', 'task'],
+        description: 'Work item type'
+      },
+      labels: {
+        type: 'array',
+        items: { type: 'string' },
+        description: 'Labels to apply'
+      }
+    }
+  },
+  handler: async (params) => {
+    const issue = await createWorkItem(params);
+    return { issue };
+  }
+};
+```
+
+#### MCP Server Configuration
+
+Users configure MCP servers in `.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "fractary-core": {
+      "command": "npx",
+      "args": ["-y", "@fractary/core-mcp-server"],
+      "env": {
+        "FRACTARY_CONFIG": ".fractary/plugins/core/config.json"
+      }
+    },
+    "fractary-faber": {
+      "command": "npx",
+      "args": ["-y", "@fractary/faber-mcp-server"]
+    },
+    "fractary-codex": {
+      "command": "npx",
+      "args": ["-y", "@fractary/codex-mcp-server"]
+    }
+  }
+}
+```
+
+#### Plugin Integration Strategy
+
+Claude Code plugins use **MCP-first, CLI-fallback** approach:
+
+```markdown
+# plugins/work/tools/issue-fetcher/tool.yaml
+
+# Try MCP first (efficient)
+mcp:
+  server: fractary-core
+  tool: fractary_work_issue_fetch
+  input_schema:
+    type: object
+    required: [issue_number]
+    properties:
+      issue_number: {type: string}
+
+# Fallback to CLI if MCP unavailable
+cli:
+  command: fractary-core
+  args: ["work", "issue", "fetch", "{issue_number}"]
+
+# Execution logic:
+# 1. If fractary-core MCP server configured → use MCP
+# 2. Else → use CLI
+# 3. Return structured result either way
+```
+
+**Performance comparison:**
+
+| Operation | CLI Time | MCP Time | Speedup |
+|-----------|----------|----------|---------|
+| Single issue fetch | 800ms | 150ms | 5.3x faster |
+| 10 operations | 8000ms | 1500ms | 5.3x faster |
+| Branch + commit + PR | 2400ms | 450ms | 5.3x faster |
+| Full FABER workflow | 30s | 8s | 3.75x faster |
+
+### 3.8 Complete Package Matrix
+
+| SDK | JavaScript (npm) | Python (pip) | CLI (npm) | MCP Server (npm) | Binary |
+|-----|-----------------|--------------|-----------|------------------|--------|
+| **core** | `@fractary/core` | `fractary-core` | `@fractary/core-cli` | `@fractary/core-mcp-server` | `fractary-core` |
+| **faber** | `@fractary/faber` | `fractary-faber` | `@fractary/faber-cli` | `@fractary/faber-mcp-server` | `fractary-faber` |
+| **codex** | `@fractary/codex` | `fractary-codex` | `@fractary/codex-cli` | `@fractary/codex-mcp-server` | `fractary-codex` |
+| **forge** | `@fractary/forge` | `fractary-forge` | `@fractary/forge-cli` | `@fractary/forge-mcp-server` | `fractary-forge` |
+| **helm** | `@fractary/helm` | `fractary-helm` | `@fractary/helm-cli` | `@fractary/helm-mcp-server` | `fractary-helm` |
+
+**Installation patterns:**
+
+```bash
+# SDK (programmatic usage)
+npm install @fractary/core          # JavaScript
+pip install fractary-core           # Python
+
+# CLI (command-line usage)
+npm install -g @fractary/core-cli   # Installs fractary-core binary
+
+# MCP server (tool integration)
+npx @fractary/core-mcp-server       # Run directly via npx
 ```
 
 ## 4. Registry System
@@ -661,39 +1021,54 @@ Total: ~8 weeks
 - ⚠️ Non-trivial migration work (8 weeks estimated)
 - Mitigation: Phased approach, backward compatibility
 
-## 8. Open Questions & Decisions
+## 8. Architectural Decisions
 
-### 8.1 Decisions Needed
+### 8.1 RESOLVED Decisions
 
-**Q1: Should status plugin live in fractary/core or fractary/cli?**
-- Option A: `fractary/core/plugins/status` (with other primitives)
-- Option B: `fractary/cli/plugins/status` (closer to CLI)
+**Q1: Should status plugin live in fractary/core or elsewhere?** ✅ **RESOLVED**
+- **Decision:** `fractary/core/plugins/status` (with other primitives)
+- **Rationale:** Status is a primitive operation like work, repo, file
 
-**Recommendation:** Option A - Status is a primitive operation like others.
+**Q2: Should we use monorepo or separate repos for primitives?** ✅ **RESOLVED**
+- **Decision:** Monorepo `fractary/core` with all primitives
+- **Rationale:** Reduces fragmentation, primitives are tightly coupled
 
-**Q2: Should we use monorepo or separate repos for primitives?**
-- Option A: Monorepo `fractary/core` with all primitives
-- Option B: Separate repos (`fractary/work`, `fractary/repo`, etc.)
+**Q3: Where should registry.json live?** ✅ **RESOLVED**
+- **Decision:** In each SDK's registry (no unified CLI needed)
+- **Rationale:** No unified CLI repository, each SDK is independent
+- **Note:** This question is now moot - registry distribution TBD
 
-**Recommendation:** Option A - Reduces fragmentation, primitives are tightly coupled.
+**Q4: Should plugin dependencies be loose or strict?** ✅ **RESOLVED**
+- **Decision:** Loose (`"^1.0.0"` - allow minor updates)
+- **Rationale:** More flexible, follows npm conventions
 
-**Q3: Where should registry.json live?**
-- Option A: `fractary/cli/config/registry.json` (bundled with CLI)
-- Option B: Separate `fractary/registry` repository
+**Q5: How to handle plugin breaking changes?** ✅ **RESOLVED**
+- **Decision:** Major version bump, deprecation notices
+- **Rationale:** Standard semver approach
 
-**Recommendation:** Option A initially, Option B if registry grows significantly.
+**Q6: Should CLI be separate package or bundled with SDK?** ✅ **RESOLVED**
+- **Decision:** Separate package (`@fractary/{domain}-cli`)
+- **Rationale:** Clean dependencies, optional installation, separation of concerns
 
-**Q4: Should plugin dependencies be loose or strict?**
-- Option A: Loose (`"^1.0.0"` - allow minor updates)
-- Option B: Strict (`"1.0.0"` - exact version)
+**Q7: Should we support multiple languages for SDKs?** ✅ **RESOLVED**
+- **Decision:** Yes - JavaScript and Python
+- **Rationale:** Broaden adoption, industry standard (AWS, Stripe, Terraform all multi-language)
 
-**Recommendation:** Option A - More flexible, follows npm conventions.
+**Q8: Should we have separate CLIs for Python and JavaScript?** ✅ **RESOLVED**
+- **Decision:** No - Single CLI in JavaScript only
+- **Rationale:** Users don't care about implementation language, avoid duplication
 
-**Q5: How to handle plugin breaking changes?**
-- Option A: Major version bump, deprecation notices
-- Option B: Maintain multiple major versions simultaneously
+**Q9: Should we have MCP servers per SDK?** ✅ **RESOLVED**
+- **Decision:** Yes - Each SDK exposes MCP server
+- **Rationale:** Universal tool access, no framework lock-in, efficient integration
 
-**Recommendation:** Option A - Standard semver approach.
+**Q10: Should we have a unified CLI (fractary) or per-SDK CLIs?** ✅ **RESOLVED**
+- **Decision:** Per-SDK CLIs only (`fractary-core`, `fractary-faber`, etc.)
+- **Rationale:** Avoids naming conflicts, simpler architecture, no routing needed
+
+**Q11: Universal naming convention?** ✅ **RESOLVED**
+- **Decision:** All packages/tools prefixed with `fractary-`
+- **Rationale:** Prevents naming conflicts (codex, helm, etc.), consistent, predictable
 
 ### 8.2 Future Considerations
 
