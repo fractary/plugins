@@ -1,0 +1,27 @@
+name: branch-manager
+type: tool
+description: |
+  Create and manage Git branches with safety checks and validation
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+    parameters:
+      type: object
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [success, failure]
+    result:
+      type: object
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/repo/skills/branch-manager
+  source_file: SKILL.md
+  scripts_directory: scripts

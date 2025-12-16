@@ -1,0 +1,23 @@
+{
+  "$schema": "https://fractary.com/schemas/plugin-manifest-v1.json",
+  "name": "@fractary/docs-plugin",
+  "version": "2.0.0",
+  "description": "Documentation management primitive",
+  "author": "Fractary Team",
+  "homepage": "https://github.com/fractary/plugins",
+  "repository": "https://github.com/fractary/plugins",
+  "license": "MIT",
+  "tags": ["docs", "documentation", "official", "primitive"],
+  "agents": [{"name": "docs-manager", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/docs/agents/docs-manager/agent.yaml", "checksum": "sha256:a53284dc9af06dff8111cdc8821a53794680bb5ead331bf03605123097ed8cba", "size": 375}],
+  "tools": [
+{"name": "doc-auditor", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/docs/tools/doc-auditor/tool.yaml", "checksum": "sha256:fe273c1b53ae8c4ce455df4ce7a96058738ee3edd36fb764e0ec950c6a74b5d6", "size": 440},
+{"name": "doc-classifier", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/docs/tools/doc-classifier/tool.yaml", "checksum": "sha256:226b36b1e68ed9dfcbc66adda6c3641d97e996295192d1e84f0fcd763f34b3ce", "size": 578},
+{"name": "doc-consistency-checker", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/docs/tools/doc-consistency-checker/tool.yaml", "checksum": "sha256:5f6f776037c4088ece9d08efc3ea86bbebba5a45bdd39ce2820ac6e7297f7751", "size": 579},
+{"name": "doc-lister", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/docs/tools/doc-lister/tool.yaml", "checksum": "sha256:03b0bcf8b889782a9e5e4c22793425d866dba0b4dd94169d1844a60dcbc36eee", "size": 537},
+{"name": "doc-validator", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/docs/tools/doc-validator/tool.yaml", "checksum": "sha256:6bec0819a8c40646794122ea886f70300b778ba07f59f7a950f21ebe9aefc8d7", "size": 590},
+{"name": "doc-writer", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/docs/tools/doc-writer/tool.yaml", "checksum": "sha256:b7210370ee74587ce0eb63a97b32d488edcb60a548dba7a91a4a9942f8bf88e1", "size": 551},
+{"name": "docs-director-skill", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/docs/tools/docs-director-skill/tool.yaml", "checksum": "sha256:182ec820ee85b2a93a131c4c5763308675b3c165a63be5842caee51b80689be4", "size": 593},
+{"name": "docs-manager-skill", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/docs/tools/docs-manager-skill/tool.yaml", "checksum": "sha256:4ddb649d5191113b05d6977f400c8ef7ea48c24d9014d50829930b5dab9261c8", "size": 578}
+  ],
+  "config": {"default_llm": {"provider": "anthropic", "model": "claude-opus-4-5"}}
+}

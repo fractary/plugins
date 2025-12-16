@@ -1,0 +1,27 @@
+name: doc-consistency-checker
+type: tool
+description: |
+  Detects when high-level project documentation is stale based on code/config changes and generates update suggestions
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+    parameters:
+      type: object
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [success, failure]
+    result:
+      type: object
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/repo/skills/doc-consistency-checker
+  source_file: SKILL.md
+  scripts_directory: scripts

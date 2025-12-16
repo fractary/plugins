@@ -1,0 +1,27 @@
+name: config-migrator
+type: tool
+description: |
+  Migrates codex configuration files from v2.0 push-based sync to v3.0 pull-based retrieval format with automatic backups
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+    parameters:
+      type: object
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [success, failure]
+    result:
+      type: object
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/repo/skills/config-migrator
+  source_file: SKILL.md
+  scripts_directory: scripts

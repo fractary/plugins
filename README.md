@@ -26,21 +26,29 @@ If you need to install manually:
 
 ## Plugin Ecosystem
 
-### Workflow Orchestrators
+### Core Plugins (Fractary Format)
 
+**Workflow Orchestrator:**
 - **faber/** - Core FABER workflow orchestration (Frame → Architect → Build → Evaluate → Release)
-- **faber-app/** - Application development FABER workflows
-- **faber-cloud/** - Cloud infrastructure FABER workflows (AWS, Terraform)
 
-### Primitive Managers
-
+**Primitive Managers:**
 - **work/** - Work item management (GitHub Issues, Jira, Linear)
-- **repo/** - Source control operations (GitHub, GitLab, Bitbucket)
-- **file/** - File storage operations (R2, S3, local filesystem)
-- **codex/** - Memory and knowledge management across projects
-- **docs/** - Living documentation management
-- **logs/** - Operational log management
-- **spec/** - Specification generation from issues
+- **repo/** - Source control operations (GitHub, GitLab, Bitbucket) with Git worktree support
+- **file/** - File storage operations (R2, S3, GCS, Google Drive, local filesystem)
+- **codex/** - Memory and knowledge management with MCP server integration
+- **docs/** - Living documentation management with type-agnostic architecture
+- **logs/** - Operational log management with hybrid retention
+- **spec/** - Specification lifecycle management tied to work items
+- **status/** - Custom status line display showing git status and work context
+
+### Meta Plugins (Claude Code Format)
+
+- **faber-agent/** - Plugin creation tools (agents, skills, commands, workflows)
+- **faber-cloud/** - Cloud infrastructure management (AWS, Terraform, deployment)
+
+### Format Notes
+
+Core plugins have been converted to **Fractary YAML format** (plugin.yaml, agent.yaml, tool.yaml) for framework-independent distribution. Meta plugins remain in Claude Code format (.claude-plugin/plugin.json, agents/*.md, skills/*/SKILL.md).
 
 ## Architecture
 
@@ -137,19 +145,31 @@ See [Version Control Guide](docs/VERSION-CONTROL-GUIDE.md) for best practices.
 
 ## Documentation
 
-### Getting Started
+### Standards & Guidelines
 
-- [Plugin Standards](docs/standards/FRACTARY-PLUGIN-STANDARDS.md) - Development patterns and guidelines
-- [FABER Architecture](specs/SPEC-00002-faber-architecture.md) - Workflow framework specification
+- [Plugin Standards](docs/standards/FRACTARY-PLUGIN-STANDARDS.md) - Development patterns and 3-layer architecture
+- [Plugin Manifest Schema](docs/standards/PLUGIN-MANIFEST-SCHEMA.md) - Claude Code plugin.json reference
+- [Command Argument Syntax](docs/standards/COMMAND-ARGUMENT-SYNTAX.md) - Command parsing standards
+- [Skill Response Format](docs/standards/SKILL-RESPONSE-BEST-PRACTICES.md) - Standardized skill responses
 - [Version Control Guide](docs/VERSION-CONTROL-GUIDE.md) - Configuration best practices
 
-### Plugin Documentation
+### Fractary Conversion
 
-- [FABER Plugin](plugins/faber/README.md) - Core workflow orchestration
-- [Work Plugin](plugins/work/README.md) - Work item management
-- [Repo Plugin](plugins/repo/README.md) - Source control operations
-- [File Plugin](plugins/file/README.md) - File storage operations
-- [Codex Plugin](plugins/codex/README.md) - Memory and knowledge management
+**Registry Manifest System:**
+- [SPEC-FORGE-005](specs/SPEC-FORGE-005-REGISTRY-MANIFEST-SYSTEM.md) - Two-level registry architecture
+- [SPEC-FORGE-007](specs/SPEC-FORGE-007-CLAUDE-TO-FRACTARY-CONVERSION.md) - Claude Code to Fractary conversion guide
+- [SPEC-FORGE-008](specs/SPEC-FORGE-008-IMPLEMENTATION-PLAN.md) - Implementation plan and phases
+
+**SDK Architecture Reference:**
+- [SPEC-00016](specs/SPEC-00016-sdk-architecture.md) - Framework architecture patterns
+- Individual plugin SDK specs (SPEC-00017 through SPEC-00025) - Reference for future Fractary SDK
+
+### Plugin User Guides
+
+- [Docs Plugin Guide](docs/guides/fractary-docs-guide.md) - Living documentation management
+- [File Plugin Guide](docs/guides/fractary-file-guide.md) - Multi-provider cloud storage
+- [Logs Plugin Guide](docs/guides/fractary-logs-guide.md) - Operational log management
+- [Spec Plugin Guide](docs/guides/fractary-spec-guide.md) - Specification lifecycle
 
 ## Development
 

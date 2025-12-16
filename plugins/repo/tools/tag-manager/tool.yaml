@@ -1,0 +1,26 @@
+name: tag-manager
+type: tool
+description: |
+  Create and push semantic version tags with GPG signing support
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+    parameters:
+      type: object
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [success, failure]
+    result:
+      type: object
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/repo/skills/tag-manager
+  source_file: SKILL.md

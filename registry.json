@@ -1,0 +1,108 @@
+{
+  "$schema": "https://fractary.com/schemas/registry-manifest-v1.json",
+  "name": "fractary-core",
+  "version": "1.0.0",
+  "description": "Official Fractary plugin registry - FABER workflow methodology and supporting primitives",
+  "updated": "2025-12-15T00:00:00Z",
+  "plugins": [
+    {
+      "name": "@fractary/faber-plugin",
+      "version": "2.0.0",
+      "description": "FABER workflow methodology - Universal SDLC framework with Frame, Architect, Build, Evaluate, Release phases",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/plugin.json",
+      "homepage": "https://github.com/fractary/plugins",
+      "repository": "https://github.com/fractary/plugins",
+      "license": "MIT",
+      "tags": ["faber", "workflow", "sdlc", "official", "orchestration"],
+      "checksum": "sha256:a71e886e4c4157208d35bebe033002d188c5eb2fea9f7f02ff7673864622fda2"
+    },
+    {
+      "name": "@fractary/repo-plugin",
+      "version": "2.0.0",
+      "description": "Source control primitive - Universal repository operations across GitHub, GitLab, and Bitbucket with Git worktree support",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/plugin.json",
+      "homepage": "https://github.com/fractary/plugins",
+      "repository": "https://github.com/fractary/plugins",
+      "license": "MIT",
+      "tags": ["repo", "source-control", "git", "github", "gitlab", "bitbucket", "official", "primitive"],
+      "checksum": "sha256:5842fa3e52ed2fa15f1a1c2a55442c634fc0e8f13a7acdd5b8f83de939ea997d"
+    },
+    {
+      "name": "@fractary/work-plugin",
+      "version": "2.0.0",
+      "description": "Work tracking primitive - Universal work item management across GitHub Issues, Jira, and Linear",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/plugin.json",
+      "homepage": "https://github.com/fractary/plugins",
+      "repository": "https://github.com/fractary/plugins",
+      "license": "MIT",
+      "tags": ["work", "issue-tracking", "github", "jira", "linear", "official", "primitive"],
+      "checksum": "sha256:e9377d689bcc6700e5fba5aaeb90ba58bdfd78ceefa8745867b6aea3d9934ae9"
+    },
+    {
+      "name": "@fractary/file-plugin",
+      "version": "2.0.0",
+      "description": "File storage primitive - Universal file operations across Local, R2, S3, GCS, and Google Drive",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/file/plugin.json",
+      "homepage": "https://github.com/fractary/plugins",
+      "repository": "https://github.com/fractary/plugins",
+      "license": "MIT",
+      "tags": ["file", "storage", "r2", "s3", "gcs", "gdrive", "official", "primitive"],
+      "checksum": "sha256:82f92c6d785c5d296778cc8ec633e41c20efb5c0ad7c05300dedbb3b4ca1724c"
+    },
+    {
+      "name": "@fractary/codex-plugin",
+      "version": "2.0.0",
+      "description": "Memory and knowledge management - Organizational knowledge base with cache and sync",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/codex/plugin.json",
+      "homepage": "https://github.com/fractary/plugins",
+      "repository": "https://github.com/fractary/plugins",
+      "license": "MIT",
+      "tags": ["codex", "knowledge", "memory", "cache", "sync", "official", "primitive"],
+      "checksum": "sha256:5ceaf962091e1d3cdcd77dd1f815b8b2aa1dcd6f072451b3cc0b26394c093ca8"
+    },
+    {
+      "name": "@fractary/docs-plugin",
+      "version": "2.0.0",
+      "description": "Documentation management primitive",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/docs/plugin.json",
+      "homepage": "https://github.com/fractary/plugins",
+      "repository": "https://github.com/fractary/plugins",
+      "license": "MIT",
+      "tags": ["docs", "documentation", "official", "primitive"],
+      "checksum": "sha256:8241f1d6da2b2b2f97e35897459e794a23526cce77d2212b3a37ee09d08c18f3"
+    },
+    {
+      "name": "@fractary/spec-plugin",
+      "version": "2.0.0",
+      "description": "Specification management primitive",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/spec/plugin.json",
+      "homepage": "https://github.com/fractary/plugins",
+      "repository": "https://github.com/fractary/plugins",
+      "license": "MIT",
+      "tags": ["spec", "specifications", "official", "primitive"],
+      "checksum": "sha256:cc08be4a11b157fe413afcacf4eef5960ee1bd1a0fbcb6bbb9b05f9ff778c4cb"
+    },
+    {
+      "name": "@fractary/logs-plugin",
+      "version": "2.0.0",
+      "description": "Logging management primitive",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/plugin.json",
+      "homepage": "https://github.com/fractary/plugins",
+      "repository": "https://github.com/fractary/plugins",
+      "license": "MIT",
+      "tags": ["logs", "logging", "official", "primitive"],
+      "checksum": "sha256:f93a2458ffe937597646f4cc6ec55070983f134df9b3a0cb7628002e8d58e569"
+    },
+    {
+      "name": "@fractary/status-plugin",
+      "version": "2.0.0",
+      "description": "Status line display primitive",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/status/plugin.json",
+      "homepage": "https://github.com/fractary/plugins",
+      "repository": "https://github.com/fractary/plugins",
+      "license": "MIT",
+      "tags": ["status", "statusline", "official", "primitive"],
+      "checksum": "sha256:b444814a7bc9673b409bbbeccc50f37d01e8c4c468c1c9cc34184e3c2e720f53"
+    }
+  ]
+}

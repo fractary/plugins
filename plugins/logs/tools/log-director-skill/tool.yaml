@@ -1,0 +1,28 @@
+name: log-director-skill
+type: tool
+description: |
+  Orchestrates multi-log workflows with parallel execution for batch operations across many logs
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+    parameters:
+      type: object
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [success, failure]
+    result:
+      type: object
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/repo/skills/log-director-skill
+  source_file: SKILL.md
+  scripts_directory: scripts
+  workflow_directory: workflow

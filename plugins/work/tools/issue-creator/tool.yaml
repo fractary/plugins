@@ -1,0 +1,26 @@
+name: issue-creator
+type: tool
+description: |
+  Create new issues in work tracking systems via Fractary CLI
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+    parameters:
+      type: object
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [success, failure]
+    result:
+      type: object
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/repo/skills/issue-creator
+  source_file: SKILL.md

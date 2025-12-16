@@ -1,0 +1,28 @@
+name: log-classifier
+type: tool
+description: |
+  Classifies logs by type (session, test, build) using path patterns and frontmatter analysis
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+    parameters:
+      type: object
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [success, failure]
+    result:
+      type: object
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/repo/skills/log-classifier
+  source_file: SKILL.md
+  scripts_directory: scripts
+  workflow_directory: workflow

@@ -1,0 +1,196 @@
+{
+  "$schema": "https://fractary.com/schemas/plugin-manifest-v1.json",
+  "name": "@fractary/work-plugin",
+  "version": "2.0.0",
+  "description": "Work tracking primitive - Universal work item management across GitHub Issues, Jira, and Linear",
+  "author": "Fractary Team",
+  "homepage": "https://github.com/fractary/plugins",
+  "repository": "https://github.com/fractary/plugins",
+  "license": "MIT",
+  "tags": ["work", "issue-tracking", "github", "jira", "linear", "official", "primitive"],
+
+  "agents": [
+    {
+      "name": "work-manager",
+      "version": "2.0.0",
+      "description": "Universal work tracking agent - routes work item operations to specialized skills",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/agents/work-manager/agent.yaml",
+      "checksum": "sha256:527757ce67f1107534377f25b9fd77897f8ea6e259e1cf26a7436cfd62a2e841",
+      "size": 4679
+    }
+  ],
+
+  "tools": [
+    {
+      "name": "cli-helper",
+      "version": "2.0.0",
+      "description": "CLI utility helpers for work tracking operations",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/cli-helper/tool.yaml",
+      "checksum": "sha256:6d50646a18dc08d759dc1615f7b826f221ee77b80f08b1f90885608c87306d00",
+      "size": 503
+    },
+    {
+      "name": "comment-creator",
+      "version": "2.0.0",
+      "description": "Post comments to issues with FABER context tracking",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/comment-creator/tool.yaml",
+      "checksum": "sha256:d12e5941446251f56cb9f8df51ad5813a24643e12ae549b8b0f02ba9af2e8ba5",
+      "size": 495,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "comment-lister",
+      "version": "2.0.0",
+      "description": "List comments on issues with optional filtering",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/comment-lister/tool.yaml",
+      "checksum": "sha256:b8fccd2fbccdb58350292e2e69e43204fbdf3d38f54f2310cf6114bab1351654",
+      "size": 480,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "handler-work-tracker-github",
+      "version": "2.0.0",
+      "description": "GitHub Issues handler for work tracking operations",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/handler-work-tracker-github/tool.yaml",
+      "checksum": "sha256:feea25b921c77a35de59a89438712d4583d277b550fe7533126b0304c9a372ec",
+      "size": 534,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "handler-work-tracker-jira",
+      "version": "2.0.0",
+      "description": "Jira Cloud handler for work tracking operations",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/handler-work-tracker-jira/tool.yaml",
+      "checksum": "sha256:5f02852dc3f529fe1ffc4a51196b0d6d88bf49f1ff2ddc0c6942ccf244fb0333",
+      "size": 527,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "handler-work-tracker-linear",
+      "version": "2.0.0",
+      "description": "Linear handler for work tracking operations",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/handler-work-tracker-linear/tool.yaml",
+      "checksum": "sha256:893e6464adb18f1e1d4e3d9a5bcf56b400a347a09b72623bda6a9447f8865d20",
+      "size": 527,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "issue-assigner",
+      "version": "2.0.0",
+      "description": "Assign and unassign issues to users",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/issue-assigner/tool.yaml",
+      "checksum": "sha256:84cd661d9938bd1dbe5caf34acfa37c938622d57338da88ce2253b79e59489e8",
+      "size": 475,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "issue-classifier",
+      "version": "2.0.0",
+      "description": "Classify work type from issue metadata",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/issue-classifier/tool.yaml",
+      "checksum": "sha256:88daa63174e06bd5b6de92269d13d018f195db57e379951c32aa660690e6c175",
+      "size": 482,
+      "dependencies": []
+    },
+    {
+      "name": "issue-creator",
+      "version": "2.0.0",
+      "description": "Create new issues in work tracking systems",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/issue-creator/tool.yaml",
+      "checksum": "sha256:ea8c98c157f655f3c9064b06dc927fc74c7a45d4429c808433d9f06a81ba30ca",
+      "size": 473,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "issue-fetcher",
+      "version": "2.0.0",
+      "description": "Fetch issue details from work tracking systems",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/issue-fetcher/tool.yaml",
+      "checksum": "sha256:8d6645853850b1d1e4d804b395134aeb3e78483c716ebf1d34ba89bb04819ad0",
+      "size": 477,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "issue-linker",
+      "version": "2.0.0",
+      "description": "Create relationships between issues for dependency tracking",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/issue-linker/tool.yaml",
+      "checksum": "sha256:0ab3026aa80497c032180024b0cfd7061903709fea9bc0c2aaa5f6fd2f8b1a88",
+      "size": 470,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "issue-searcher",
+      "version": "2.0.0",
+      "description": "Search and list issues",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/issue-searcher/tool.yaml",
+      "checksum": "sha256:d79ee59c72fb3858c178f5ffc8190534fb7bdd9309aaab27e05c1b513d417652",
+      "size": 455,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "issue-updater",
+      "version": "2.0.0",
+      "description": "Update issue title and description",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/issue-updater/tool.yaml",
+      "checksum": "sha256:cbec60bcbbd09255719ab1b0acca8da2228043e6ed919e1b8b3b64ed5df55ffa",
+      "size": 465,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "label-manager",
+      "version": "2.0.0",
+      "description": "Add, remove, list, and set labels on issues",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/label-manager/tool.yaml",
+      "checksum": "sha256:b55c29228746460f277ab80f56e24fafda560f51ac8a2f911cff4316b049bd45",
+      "size": 469,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "milestone-manager",
+      "version": "2.0.0",
+      "description": "Manage milestones for release planning and sprint management",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/milestone-manager/tool.yaml",
+      "checksum": "sha256:abcbc5e617566c66710e17ccfd929d1ff24b5f0d494857c3d053fa820ec5342d",
+      "size": 477,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "state-manager",
+      "version": "2.0.0",
+      "description": "Manage issue lifecycle states (close, reopen, update state)",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/state-manager/tool.yaml",
+      "checksum": "sha256:ceb15d0317b2b0c813ad8bc74e1e366dade34e6f1cdabb16a4a4bb34234d147e",
+      "size": 490,
+      "dependencies": ["work-common"]
+    },
+    {
+      "name": "work-common",
+      "version": "2.0.0",
+      "description": "Shared utilities and configuration for work tracking operations",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/work-common/tool.yaml",
+      "checksum": "sha256:5e64005adcfff8d4c41d48d5bf2836aac0e3db97982c6d37d2782f5b4dcb20d9",
+      "size": 482
+    },
+    {
+      "name": "work-initializer",
+      "version": "2.0.0",
+      "description": "Initialize work plugin configuration",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/work/tools/work-initializer/tool.yaml",
+      "checksum": "sha256:58bd425d35315420affcaca7c437d1f59505e3e5280fd28d77e1e22d8c07090b",
+      "size": 527
+    }
+  ],
+
+  "config": {
+    "default_llm": {
+      "provider": "anthropic",
+      "model": "claude-opus-4-5"
+    },
+    "permissions": {
+      "read": ["**/*.md", "**/*.yaml", "**/*.json", ".fractary/**"],
+      "write": [".fractary/**"],
+      "execute": ["bash", "gh"]
+    }
+  }
+}

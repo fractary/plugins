@@ -1,0 +1,107 @@
+{
+  "$schema": "https://fractary.com/schemas/plugin-manifest-v1.json",
+  "name": "@fractary/file-plugin",
+  "version": "2.0.0",
+  "description": "File storage primitive - Universal file operations across Local, R2, S3, GCS, and Google Drive",
+  "author": "Fractary Team",
+  "homepage": "https://github.com/fractary/plugins",
+  "repository": "https://github.com/fractary/plugins",
+  "license": "MIT",
+  "tags": ["file", "storage", "r2", "s3", "gcs", "gdrive", "official", "primitive"],
+
+  "agents": [
+    {
+      "name": "file-manager",
+      "version": "2.0.0",
+      "description": "Universal file storage agent - routes file operations to specialized storage handlers",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/file/agents/file-manager/agent.yaml",
+      "checksum": "sha256:a8de4e75b6a3366fa9b73b88e6e847d69a543d063cb20d1736209af98701bbba",
+      "size": 2104
+    }
+  ],
+
+  "tools": [
+    {
+      "name": "common",
+      "version": "2.0.0",
+      "description": "Shared utilities and helper functions for file storage operations",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/file/tools/common/tool.yaml",
+      "checksum": "sha256:32b20063787a81fdcd9adde04bc8d2f60faf32c30dd486c4c159251e219fe720",
+      "size": 325
+    },
+    {
+      "name": "config-wizard",
+      "version": "2.0.0",
+      "description": "Interactive setup wizard for configuring file storage",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/file/tools/config-wizard/tool.yaml",
+      "checksum": "sha256:f948fac3dc374c80d530adf02acbd1dfda58f0ac1fb6fd55a11865f860ab1401",
+      "size": 565
+    },
+    {
+      "name": "file-manager",
+      "version": "2.0.0",
+      "description": "Core file management operations",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/file/tools/file-manager/tool.yaml",
+      "checksum": "sha256:db19b3be48d5e8443421b71ed9cf5ea1392f378f07433d21ad06446fdb13aa28",
+      "size": 555,
+      "dependencies": ["common"]
+    },
+    {
+      "name": "handler-storage-gcs",
+      "version": "2.0.0",
+      "description": "Google Cloud Storage handler",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/file/tools/handler-storage-gcs/tool.yaml",
+      "checksum": "sha256:6f9f7ed7aa559ad5835ec457e4f6282b3cdb604cabc2a36300054543fbd32d15",
+      "size": 508,
+      "dependencies": ["common"]
+    },
+    {
+      "name": "handler-storage-gdrive",
+      "version": "2.0.0",
+      "description": "Google Drive storage handler",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/file/tools/handler-storage-gdrive/tool.yaml",
+      "checksum": "sha256:777dec9809ab34dd1a7c5052bf9ff7f556815a74fbb110bf25987c25198baa0e",
+      "size": 514,
+      "dependencies": ["common"]
+    },
+    {
+      "name": "handler-storage-local",
+      "version": "2.0.0",
+      "description": "Local filesystem storage handler",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/file/tools/handler-storage-local/tool.yaml",
+      "checksum": "sha256:bb2543ce497cabf297234d633a6d75b48af09092df292472551677b44c63416a",
+      "size": 516,
+      "dependencies": ["common"]
+    },
+    {
+      "name": "handler-storage-r2",
+      "version": "2.0.0",
+      "description": "Cloudflare R2 storage handler",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/file/tools/handler-storage-r2/tool.yaml",
+      "checksum": "sha256:b09487947878b4afa6538e8d9d89c5d3420907ffe7c8facc4f2f548df0abfd90",
+      "size": 507,
+      "dependencies": ["common"]
+    },
+    {
+      "name": "handler-storage-s3",
+      "version": "2.0.0",
+      "description": "AWS S3 storage handler",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/file/tools/handler-storage-s3/tool.yaml",
+      "checksum": "sha256:803ac36e1b51c5c3b20ed142ec08bf7444a14cac4815db20692637d470dc09f5",
+      "size": 500,
+      "dependencies": ["common"]
+    }
+  ],
+
+  "config": {
+    "default_llm": {
+      "provider": "anthropic",
+      "model": "claude-opus-4-5"
+    },
+    "permissions": {
+      "read": ["**/*.md", "**/*.yaml", "**/*.json", ".fractary/**"],
+      "write": [".fractary/**", "uploads/**"],
+      "execute": ["bash"]
+    }
+  }
+}

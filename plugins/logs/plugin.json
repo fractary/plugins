@@ -1,0 +1,27 @@
+{
+  "$schema": "https://fractary.com/schemas/plugin-manifest-v1.json",
+  "name": "@fractary/logs-plugin",
+  "version": "2.0.0",
+  "description": "Logging management primitive",
+  "author": "Fractary Team",
+  "homepage": "https://github.com/fractary/plugins",
+  "repository": "https://github.com/fractary/plugins",
+  "license": "MIT",
+  "tags": ["logs", "logging", "official", "primitive"],
+  "agents": [{"name": "log-manager", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/agents/log-manager/agent.yaml", "checksum": "sha256:33b74a0fde406bcbc1659dc1000c682d83c1bf79ed42e21b297e04693766e69c", "size": 279}],
+  "tools": [
+    {"name": "log-analyzer", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-analyzer/tool.yaml", "checksum": "sha256:0c09464282ab3285fc3ddd8f584cdc624ea27cd944790433ae0a61c1227f52ea", "size": 541},
+    {"name": "log-archiver", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-archiver/tool.yaml", "checksum": "sha256:8ae7e689871c2879f1851e777a59eb407b9458eedd19b84b88cced5342bd5534", "size": 546},
+    {"name": "log-auditor", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-auditor/tool.yaml", "checksum": "sha256:2746353f8e61af5e6faaacbf4da0fa9205ae595a8496bf154b298b1d089e15a3", "size": 440},
+    {"name": "log-capturer", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-capturer/tool.yaml", "checksum": "sha256:1e4b183966c27e6002b39e9499b6e43888faf8e76e758294d67e3ca68e339dda", "size": 578},
+    {"name": "log-classifier", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-classifier/tool.yaml", "checksum": "sha256:6bf3fa2d9ffbbe313a1725939e293785bab42b30e3838a4a1085be800a1430e4", "size": 567},
+    {"name": "log-director-skill", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-director-skill/tool.yaml", "checksum": "sha256:2ac29418db99f3c72529dd8ec00cba0f9b55562e59bce3aa737d86ec87ac6a38", "size": 578},
+    {"name": "log-lister", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-lister/tool.yaml", "checksum": "sha256:dc1ec395479651d3754b4008523d9ffd566359389c5d3f6a910fd7a334cffe28", "size": 558},
+    {"name": "log-manager-skill", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-manager-skill/tool.yaml", "checksum": "sha256:87ffe9d70099d5b7220cf8a4f783e5eef909a0a11aeef49f88eb0eb7679f0f31", "size": 579},
+    {"name": "log-searcher", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-searcher/tool.yaml", "checksum": "sha256:dc1754483a4f6ea98fcac8a0946f5d3d241618fe063d0bd6211ddd51e8ae4613", "size": 521},
+    {"name": "log-summarizer", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-summarizer/tool.yaml", "checksum": "sha256:45c1e1148484955824dc16a70d67a8d32ca0f1a2875b921584a0e3d7d766e75d", "size": 531},
+    {"name": "log-validator", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-validator/tool.yaml", "checksum": "sha256:adecb8359810aec0f3a75b7ce8e7f91214498314ece2ba362d938009c9b21f02", "size": 571},
+    {"name": "log-writer", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/log-writer/tool.yaml", "checksum": "sha256:29e808f9d9635ca76adb34ce3a2e81f02c276a52fb45717483afb09728cac638", "size": 562},
+    {"name": "workflow-event-emitter", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/logs/tools/workflow-event-emitter/tool.yaml", "checksum": "sha256:a93ae1591f1ac17adf78518f9f01a3eefdc46231a27cd0da4868b5fcc0a3d3c3", "size": 549}
+  ],
+  "config": {"default_llm": {"provider": "anthropic", "model": "claude-opus-4-5"}}}

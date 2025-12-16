@@ -1,0 +1,180 @@
+{
+  "$schema": "https://fractary.com/schemas/plugin-manifest-v1.json",
+  "name": "@fractary/repo-plugin",
+  "version": "2.0.0",
+  "description": "Source control primitive - Universal repository operations across GitHub, GitLab, and Bitbucket with Git worktree support",
+  "author": "Fractary Team",
+  "homepage": "https://github.com/fractary/plugins",
+  "repository": "https://github.com/fractary/plugins",
+  "license": "MIT",
+  "tags": ["repo", "source-control", "git", "github", "gitlab", "bitbucket", "official", "primitive"],
+
+  "agents": [
+    {
+      "name": "repo-manager",
+      "version": "2.0.0",
+      "description": "Universal source control agent - routes repository operations to specialized skills",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/agents/repo-manager/agent.yaml",
+      "checksum": "sha256:de175529bfee316c6d6df80c1e39e34e0d10e95af3db27b26f27905cec07ad04",
+      "size": 18708
+    }
+  ],
+
+  "tools": [
+    {
+      "name": "branch-manager",
+      "version": "2.0.0",
+      "description": "Create and manage Git branches with safety checks and validation",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/branch-manager/tool.yaml",
+      "checksum": "sha256:f508a92acd5112381d0e2a8685eecb5da352334f879260aae14e6fe596b70763",
+      "size": 509,
+      "dependencies": ["repo-common", "handler-source-control-github", "handler-source-control-gitlab", "handler-source-control-bitbucket"]
+    },
+    {
+      "name": "branch-namer",
+      "version": "2.0.0",
+      "description": "Generate semantic branch names from work item metadata following conventions",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/branch-namer/tool.yaml",
+      "checksum": "sha256:851f9b80e21ffdff9fe05ec2225e83ab6bbb87e424103fe3e2c99e4957121437",
+      "size": 488,
+      "dependencies": []
+    },
+    {
+      "name": "branch-puller",
+      "version": "2.0.0",
+      "description": "Pull branches from remote repository with intelligent conflict resolution",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/branch-puller/tool.yaml",
+      "checksum": "sha256:75b337cb444bd10705557b17afc16e5bc21021a3a0973376af2667969ee58590",
+      "size": 487,
+      "dependencies": ["repo-common", "handler-source-control-github", "handler-source-control-gitlab", "handler-source-control-bitbucket"]
+    },
+    {
+      "name": "branch-pusher",
+      "version": "2.0.0",
+      "description": "Push branches to remote repository with safety checks and force-with-lease support",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/branch-pusher/tool.yaml",
+      "checksum": "sha256:f990399078a079801f5c045ee87f4fe4616792d3f84c6e3b37c2c5643d83eb89",
+      "size": 496,
+      "dependencies": ["repo-common", "handler-source-control-github", "handler-source-control-gitlab", "handler-source-control-bitbucket"]
+    },
+    {
+      "name": "cleanup-manager",
+      "version": "2.0.0",
+      "description": "List and delete stale branches with safety checks for merged and inactive branches",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/cleanup-manager/tool.yaml",
+      "checksum": "sha256:bde8f097a46f692ab41de146039ceae03dea57871cd231b6c51a871b658f2c08",
+      "size": 500,
+      "dependencies": ["repo-common", "handler-source-control-github", "handler-source-control-gitlab", "handler-source-control-bitbucket"]
+    },
+    {
+      "name": "commit-creator",
+      "version": "2.0.0",
+      "description": "Create semantic commits with FABER metadata and conventional commit format",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/commit-creator/tool.yaml",
+      "checksum": "sha256:25778a081d92fba57fc4c698d1df746240152867213824b150dbea0ed4ca6a0a",
+      "size": 490,
+      "dependencies": ["repo-common"]
+    },
+    {
+      "name": "config-wizard",
+      "version": "2.0.0",
+      "description": "Interactive setup wizard for configuring the Fractary Repo Plugin",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/config-wizard/tool.yaml",
+      "checksum": "sha256:4507b4f4b67603591559610b986af4455e25ac4a1af73d0d4da916c1fa90048f",
+      "size": 508,
+      "dependencies": []
+    },
+    {
+      "name": "handler-source-control-bitbucket",
+      "version": "2.0.0",
+      "description": "Bitbucket source control handler centralizing Git CLI and Bitbucket API operations with protected branch safety",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/handler-source-control-bitbucket/tool.yaml",
+      "checksum": "sha256:6f776fd4241de8fb7228dd44068cebcf9c6f08b226fac6b47c988e7d804be89e",
+      "size": 592,
+      "dependencies": ["repo-common"]
+    },
+    {
+      "name": "handler-source-control-github",
+      "version": "2.0.0",
+      "description": "GitHub source control handler centralizing Git CLI and GitHub API operations with protected branch safety",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/handler-source-control-github/tool.yaml",
+      "checksum": "sha256:7f7e1bc185aaea2f0e4136b7f4f6b26163b06c6856976e90ecc3322860c9ba0f",
+      "size": 580,
+      "dependencies": ["repo-common"]
+    },
+    {
+      "name": "handler-source-control-gitlab",
+      "version": "2.0.0",
+      "description": "GitLab source control handler centralizing Git CLI and GitLab API operations with protected branch safety",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/handler-source-control-gitlab/tool.yaml",
+      "checksum": "sha256:6952902353857d6499478423f2793e8dbc400d994a164c09cc7966528699e980",
+      "size": 580,
+      "dependencies": ["repo-common"]
+    },
+    {
+      "name": "permission-manager",
+      "version": "2.0.0",
+      "description": "Manages Claude Code permissions in .claude/settings.json for repo plugin operations",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/permission-manager/tool.yaml",
+      "checksum": "sha256:ebd760efa3b66b07fb1dde21fae2580dc1ef86130fab8af4ec7280789944176f",
+      "size": 536,
+      "dependencies": []
+    },
+    {
+      "name": "pr-manager",
+      "version": "2.0.0",
+      "description": "Create, comment, review, approve, and merge pull requests with FABER metadata",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/pr-manager/tool.yaml",
+      "checksum": "sha256:d36b9ec3d04e59c27399165852e8977316ba27dde058300fe3252d9a4e4d350a",
+      "size": 516,
+      "dependencies": ["repo-common", "handler-source-control-github", "handler-source-control-gitlab", "handler-source-control-bitbucket"]
+    },
+    {
+      "name": "repo-common",
+      "version": "2.0.0",
+      "description": "Shared utilities and configuration management for repo plugin skills including validation and semantic formatting",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/repo-common/tool.yaml",
+      "checksum": "sha256:ec8de6b3fc658e08b3166bdb234f1e5308a3e786981f68d7f40ab1db594e20bf",
+      "size": 552,
+      "dependencies": []
+    },
+    {
+      "name": "tag-manager",
+      "version": "2.0.0",
+      "description": "Create and push semantic version tags with GPG signing support",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/tag-manager/tool.yaml",
+      "checksum": "sha256:c7cb01ffce9c440dcd1c83f662e610f0a4edca3bdd8c74d191d10f9b4279d2c5",
+      "size": 472,
+      "dependencies": ["repo-common", "handler-source-control-github", "handler-source-control-gitlab", "handler-source-control-bitbucket"]
+    },
+    {
+      "name": "worktree-manager",
+      "version": "2.0.0",
+      "description": "Create and manage Git worktrees for parallel development workflows",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/repo/tools/worktree-manager/tool.yaml",
+      "checksum": "sha256:80a5a1ae510f8e2a34ec348e904e8e3d8a0a8d513839ede91209d93d801350f5",
+      "size": 515,
+      "dependencies": ["repo-common"]
+    }
+  ],
+
+  "commands": [],
+
+  "workflows": [],
+
+  "templates": [],
+
+  "hooks": [],
+
+  "config": {
+    "default_llm": {
+      "provider": "anthropic",
+      "model": "claude-opus-4-5"
+    },
+    "permissions": {
+      "read": ["**/*.md", "**/*.yaml", "**/*.json", ".fractary/**", ".git/**"],
+      "write": [".fractary/**", ".git/**"],
+      "execute": ["bash", "git", "gh"]
+    }
+  }
+}

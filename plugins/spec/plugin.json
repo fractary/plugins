@@ -1,0 +1,21 @@
+{
+  "$schema": "https://fractary.com/schemas/plugin-manifest-v1.json",
+  "name": "@fractary/spec-plugin",
+  "version": "2.0.0",
+  "description": "Specification management primitive",
+  "author": "Fractary Team",
+  "homepage": "https://github.com/fractary/plugins",
+  "repository": "https://github.com/fractary/plugins",
+  "license": "MIT",
+  "tags": ["spec", "specifications", "official", "primitive"],
+  "agents": [{"name": "spec-manager", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/spec/agents/spec-manager/agent.yaml", "checksum": "sha256:43dda531c820855cc0407d3b926f599f715417fe419e1a8bf791698f5c886425", "size": 286}],
+  "tools": [
+    {"name": "spec-archiver", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/spec/tools/spec-archiver/tool.yaml", "checksum": "sha256:c95a63371da40fcb1911c5cdaf297d9ca0a041991021558b640b4e4bd9372e46", "size": 584},
+    {"name": "spec-generator", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/spec/tools/spec-generator/tool.yaml", "checksum": "sha256:a01864e24eae726339bd31a694b05a6e27d1fd2865c9086660511c018da89542", "size": 584},
+    {"name": "spec-initializer", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/spec/tools/spec-initializer/tool.yaml", "checksum": "sha256:1bfe6f7eacfcd7ce753ccc2030539c9f7f2919345d5b1aee8d620d29c40b0334", "size": 485},
+    {"name": "spec-linker", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/spec/tools/spec-linker/tool.yaml", "checksum": "sha256:2fe11c7343caa779eb39098ec8c07dbe6734190cdaaa9049332d247c3f618def", "size": 538},
+    {"name": "spec-refiner", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/spec/tools/spec-refiner/tool.yaml", "checksum": "sha256:94b58c116cc3ed733dfe2e358733764842dfda5df25f21a42ba48f3ed7a107d2", "size": 584},
+    {"name": "spec-updater", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/spec/tools/spec-updater/tool.yaml", "checksum": "sha256:f5b28f9c20e56c9a7a4293cc0608b34cdb264e6d2f9529b946f4b22bc51666e9", "size": 522},
+    {"name": "spec-validator", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/spec/tools/spec-validator/tool.yaml", "checksum": "sha256:79614faf86def4585ea195bbd4d0225a0740e93c9168ba9b2ff5ba47ea286097", "size": 606}
+  ],
+  "config": {"default_llm": {"provider": "anthropic", "model": "claude-opus-4-5"}}}

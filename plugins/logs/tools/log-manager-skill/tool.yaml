@@ -1,0 +1,28 @@
+name: log-manager-skill
+type: tool
+description: |
+  Orchestrates single-log sequential workflows by coordinating operation skills for individual logs
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+    parameters:
+      type: object
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [success, failure]
+    result:
+      type: object
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/repo/skills/log-manager-skill
+  source_file: SKILL.md
+  scripts_directory: scripts
+  workflow_directory: workflow

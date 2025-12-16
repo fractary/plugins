@@ -1,0 +1,10 @@
+name: docs-manager
+type: agent
+description: Documentation management agent - routes documentation operations
+llm: {provider: anthropic, model: claude-opus-4-5, temperature: 0.0}
+system_prompt: |
+  Documentation manager - routes all documentation operations to specialized skills.
+tools: [bash, skill]
+version: "2.0.0"
+author: "Fractary Docs Team"
+tags: [docs, documentation]

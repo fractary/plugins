@@ -1,0 +1,26 @@
+name: status-line-manager
+type: tool
+description: |
+  Installs and configures custom status line functionality in Claude Code projects with proper plugin root variable usage
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+    parameters:
+      type: object
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [success, failure]
+    result:
+      type: object
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/repo/skills/status-line-manager
+  source_file: SKILL.md

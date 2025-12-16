@@ -1,0 +1,189 @@
+{
+  "$schema": "https://fractary.com/schemas/plugin-manifest-v1.json",
+  "name": "@fractary/faber-plugin",
+  "version": "2.0.0",
+  "description": "FABER workflow methodology - Universal SDLC framework with Frame, Architect, Build, Evaluate, Release phases",
+  "author": "Fractary Team",
+  "homepage": "https://github.com/fractary/plugins",
+  "repository": "https://github.com/fractary/plugins",
+  "license": "MIT",
+  "tags": ["faber", "workflow", "sdlc", "official", "orchestration"],
+
+  "agents": [
+    {
+      "name": "faber-manager",
+      "version": "2.0.0",
+      "description": "Universal FABER workflow orchestrator - manages complete SDLC lifecycle through 5 phases",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/agents/faber-manager/agent.yaml",
+      "checksum": "sha256:7f0a3407f720cec9a0178708af86552a4776655b0bd2d530cd61be3e6dcc73a7",
+      "size": 12208,
+      "dependencies": ["frame", "architect", "build", "evaluate", "release"]
+    },
+    {
+      "name": "faber-planner",
+      "version": "2.0.0",
+      "description": "FABER planning agent - creates execution plans without executing them (Phase 1 of two-phase architecture)",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/agents/faber-planner/agent.yaml",
+      "checksum": "sha256:98affd65b3d6cdb2c0fc9defc4014c95c0f0c2e2eeecb1091c32965b5603da8e",
+      "size": 10238,
+      "dependencies": ["faber-config", "faber-state"]
+    }
+  ],
+
+  "tools": [
+    {
+      "name": "frame",
+      "version": "2.0.0",
+      "description": "FABER Phase 1 - Fetch work item, classify work type, set up environment",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/tools/frame/tool.yaml",
+      "checksum": "sha256:2c262d7bf5df1efdfe2826a7568df090f4a724471a9b3ecdb11077bcea2cdbf5",
+      "size": 3788,
+      "dependencies": []
+    },
+    {
+      "name": "architect",
+      "version": "2.0.0",
+      "description": "FABER Phase 2 - Design solution, create specification",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/tools/architect/tool.yaml",
+      "checksum": "sha256:ee2f6852000acb991c91107a578a13611964fe6901ad1a65f560d55c7d6d3d43",
+      "size": 3077,
+      "dependencies": []
+    },
+    {
+      "name": "build",
+      "version": "2.0.0",
+      "description": "FABER Phase 3 - Implement solution according to specification",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/tools/build/tool.yaml",
+      "checksum": "sha256:ad1e81fc3b732e563489ad83c51be5f728b560990f59ac6ed6f9f620fa42b70d",
+      "size": 2917,
+      "dependencies": []
+    },
+    {
+      "name": "evaluate",
+      "version": "2.0.0",
+      "description": "FABER Phase 4 - Validate implementation against requirements with retry loop",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/tools/evaluate/tool.yaml",
+      "checksum": "sha256:5e598062ba64c0b9d7d701499b7d4bac21df9c12199dcaa94970d617270bac9c",
+      "size": 3692,
+      "dependencies": []
+    },
+    {
+      "name": "release",
+      "version": "2.0.0",
+      "description": "FABER Phase 5 - Create PR, deploy, and document",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/tools/release/tool.yaml",
+      "checksum": "sha256:48396b1d4387ca962c43e29f8d5d11e5c8f2bdd26f178a5453af0a17a8133bae",
+      "size": 3555,
+      "dependencies": []
+    },
+    {
+      "name": "faber-config",
+      "version": "2.0.0",
+      "description": "FABER configuration management - load, validate, and manage workflow settings",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/tools/faber-config/tool.yaml",
+      "checksum": "sha256:dde53c41825dd9b32089888346c67657fa78082d272ad3a9f395939b8a715c96",
+      "size": 1817
+    },
+    {
+      "name": "faber-state",
+      "version": "2.0.0",
+      "description": "FABER state management - track workflow execution state and enable resume/retry",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/tools/faber-state/tool.yaml",
+      "checksum": "sha256:39e9e04f36b39edaf74f371cc6cf6694cdafde2f5d3e02d76b72d3b4ef182f80",
+      "size": 1489
+    },
+    {
+      "name": "faber-executor",
+      "version": "2.0.0",
+      "description": "FABER execution engine - orchestrate workflow steps and phase transitions",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/tools/faber-executor/tool.yaml",
+      "checksum": "sha256:4be925363252edadedae9b4df09f0ee5981d835573116bde0c3d22bd5262d66a",
+      "size": 1612
+    },
+    {
+      "name": "faber-hooks",
+      "version": "2.0.0",
+      "description": "FABER hooks system - phase-level callbacks for custom behavior",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/tools/faber-hooks/tool.yaml",
+      "checksum": "sha256:9ef2862329bc7241b7f1f82dccec6b12c07ce9383681f2de8a24df4d9e36ba85",
+      "size": 1481
+    },
+    {
+      "name": "run-manager",
+      "version": "2.0.0",
+      "description": "FABER run management - track workflow runs and execution history",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/tools/run-manager/tool.yaml",
+      "checksum": "sha256:ac7a003a333db3b0ef89b8dc8f36ace96cec75eb5bc46e200a335d6a1fc471bf",
+      "size": 2349
+    }
+  ],
+
+  "commands": [
+    {
+      "name": "faber-run",
+      "version": "2.0.0",
+      "description": "Execute FABER workflow on work item",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/commands/run.md",
+      "checksum": "sha256:pending",
+      "size": 0
+    },
+    {
+      "name": "faber-plan",
+      "version": "2.0.0",
+      "description": "Create FABER execution plan without executing",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/commands/plan.md",
+      "checksum": "sha256:pending",
+      "size": 0
+    },
+    {
+      "name": "faber-execute",
+      "version": "2.0.0",
+      "description": "Execute a previously created FABER plan",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/commands/execute.md",
+      "checksum": "sha256:pending",
+      "size": 0
+    },
+    {
+      "name": "faber-status",
+      "version": "2.0.0",
+      "description": "Show current FABER workflow status",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/commands/status.md",
+      "checksum": "sha256:pending",
+      "size": 0
+    },
+    {
+      "name": "faber-init",
+      "version": "2.0.0",
+      "description": "Initialize FABER configuration for project",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/commands/init.md",
+      "checksum": "sha256:pending",
+      "size": 0
+    },
+    {
+      "name": "faber-audit",
+      "version": "2.0.0",
+      "description": "Audit FABER configuration and validate setup",
+      "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber/commands/audit.md",
+      "checksum": "sha256:pending",
+      "size": 0
+    }
+  ],
+
+  "workflows": [],
+
+  "templates": [],
+
+  "hooks": [],
+
+  "config": {
+    "default_llm": {
+      "provider": "anthropic",
+      "model": "claude-opus-4-5"
+    },
+    "permissions": {
+      "read": ["**/*.md", "**/*.yaml", "**/*.json", ".fractary/**", "specs/**"],
+      "write": [".fractary/**", "docs/**", "specs/**"],
+      "execute": ["bash"]
+    }
+  }
+}

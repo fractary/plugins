@@ -1,0 +1,27 @@
+name: doc-classifier
+type: tool
+description: |
+  Auto-detects document type from file path or content with confidence scoring, trying path-based detection first then content analysis
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+    parameters:
+      type: object
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [success, failure]
+    result:
+      type: object
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/repo/skills/doc-classifier
+  source_file: SKILL.md
+  scripts_directory: scripts

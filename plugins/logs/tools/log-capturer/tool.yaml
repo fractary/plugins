@@ -1,0 +1,28 @@
+name: log-capturer
+type: tool
+description: |
+  Captures Claude Code conversation sessions in structured markdown format tied to work items with redaction
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+    parameters:
+      type: object
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [success, failure]
+    result:
+      type: object
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/repo/skills/log-capturer
+  source_file: SKILL.md
+  scripts_directory: scripts
+  workflow_directory: workflow

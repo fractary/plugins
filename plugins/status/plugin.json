@@ -1,0 +1,16 @@
+{
+  "$schema": "https://fractary.com/schemas/plugin-manifest-v1.json",
+  "name": "@fractary/status-plugin",
+  "version": "2.0.0",
+  "description": "Status line display primitive",
+  "author": "Fractary Team",
+  "homepage": "https://github.com/fractary/plugins",
+  "repository": "https://github.com/fractary/plugins",
+  "license": "MIT",
+  "tags": ["status", "statusline", "official", "primitive"],
+  "agents": [],
+  "tools": [
+    {"name": "status-line-manager", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/status/tools/status-line-manager/tool.yaml", "checksum": "sha256:513adfe2b39a900789ce5675ef94df0aaeb088bd4cd8cf479b8f6dfc1a1498a8", "size": 545},
+    {"name": "status-syncer", "version": "2.0.0", "source": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/status/tools/status-syncer/tool.yaml", "checksum": "sha256:04673c410d29b5a2e30ebb2c27c103207a76dad1dd8438a05f80f3bf3ef9fc1c", "size": 518}
+  ],
+  "config": {"default_llm": {"provider": "anthropic", "model": "claude-opus-4-5"}}}

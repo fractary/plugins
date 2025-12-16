@@ -99,18 +99,31 @@ Commands will NOT work without the proper prefix. The plugin system uses the ful
 
 ### Plugin Ecosystem
 
-The repository is organized around a **modular plugin architecture** with two types of plugins:
+The repository contains **11 active plugins** organized by format and purpose:
 
-1. **Workflow Orchestrators** - Manage complete domain workflows
+**Core Plugins (9 - Fractary YAML Format):**
+
+1. **Workflow Orchestrator:**
    - `faber/` - Core FABER workflow orchestration (Frame → Architect → Build → Evaluate → Release)
-   - `faber-app/` - Application development FABER workflows
-   - `faber-cloud/` - Cloud infrastructure FABER workflows (formerly fractary-devops)
 
-2. **Primitive Managers** - Handle specific infrastructure concerns
+2. **Primitive Managers (8):**
    - `work/` - Work item management (GitHub Issues, Jira, Linear)
    - `repo/` - Source control operations (GitHub, GitLab, Bitbucket) + Git worktree management
-   - `file/` - File storage operations (R2, S3, local filesystem)
-   - `codex/` - Memory and knowledge management across projects
+   - `file/` - File storage operations (R2, S3, GCS, Google Drive, local filesystem)
+   - `codex/` - Memory and knowledge management with MCP server integration
+   - `docs/` - Living documentation management with type-agnostic architecture
+   - `logs/` - Operational log management with hybrid retention
+   - `spec/` - Specification lifecycle management tied to work items
+   - `status/` - Custom status line display showing git status and work context
+
+**Meta Plugins (2 - Claude Code Format):**
+   - `faber-agent/` - Plugin creation tools (agents, skills, commands, workflows)
+   - `faber-cloud/` - Cloud infrastructure management (AWS, Terraform, deployment)
+
+**Format Notes:**
+- Core plugins converted to **Fractary YAML format** (plugin.yaml, agent.yaml, tool.yaml)
+- Meta plugins remain in **Claude Code format** (.claude-plugin/plugin.json, agents/*.md, skills/*/SKILL.md)
+- Fractary format enables framework-independent distribution via registry manifest system
 
 ### Three-Layer Architecture Pattern
 
@@ -137,7 +150,19 @@ Layer 4: Scripts (Deterministic Operations - executed outside LLM context)
 
 ### Plugin Manifest Format
 
-**CRITICAL**: The `.claude-plugin/plugin.json` manifest has a **strict, minimal schema**. Use only these fields:
+**IMPORTANT**: This repository uses **two manifest formats**:
+
+1. **Fractary YAML Format** (9 core plugins) - Framework-independent distribution
+   - `plugin.json` - Plugin manifest with metadata and checksums
+   - `agents/{name}/agent.yaml` - Agent definitions
+   - `tools/{name}/tool.yaml` - Tool definitions
+
+2. **Claude Code Format** (2 meta plugins) - Claude Code specific
+   - `.claude-plugin/plugin.json` - Plugin manifest
+   - `agents/*.md` - Agent markdown files
+   - `skills/*/SKILL.md` - Skill markdown files
+
+**For Claude Code plugins** (.claude-plugin/plugin.json), the manifest has a **strict, minimal schema**. Use only these fields:
 
 ```json
 {
@@ -226,41 +251,96 @@ Note: The install script for status-related plugins should write this configurat
 
 ## Directory Structure
 
+### Core Plugins (Fractary YAML Format)
+
 ```
 plugins/
 ├── faber/              # Core FABER workflow orchestration
-│   ├── agents/         # Workflow orchestration (faber-director, faber-manager)
-│   ├── skills/         # Phase skills (frame, architect, build, evaluate, release) + core utilities
-│   ├── commands/       # User commands (/faber, /faber:init, /faber:run, /faber:status)
+│   ├── agents/         # faber-manager/agent.yaml, faber-planner/agent.yaml
+│   ├── tools/          # frame/, architect/, build/, evaluate/, release/ (10 tools)
+│   ├── plugin.json     # Fractary manifest with checksums
+│   ├── commands/       # User commands (Claude Code .md files)
 │   ├── presets/        # Quick-start configuration presets
 │   └── config/         # Configuration templates
-├── faber-app/          # Application development workflows
-├── faber-cloud/        # Cloud infrastructure workflows (AWS, Terraform)
-├── work/               # Work tracking primitive (GitHub, Jira, Linear)
-│   ├── agents/         # work-manager agent
-│   ├── skills/         # Platform-specific scripts (github/, jira/, linear/)
-│   └── hooks/          # Plugin-level hooks (auto-comment, etc.)
-├── repo/               # Source control primitive (GitHub, GitLab, Bitbucket) + worktrees
-│   ├── agents/         # repo-manager agent
-│   ├── skills/         # Platform-specific scripts (github/, gitlab/) + worktree-manager
-│   ├── scripts/        # Plugin-level scripts (auto-commit, status-cache)
-│   └── hooks/          # Plugin-level hooks (SessionStart, Stop, UserPromptSubmit)
-├── status/             # Custom status line display
-│   ├── skills/         # Status line manager
-│   ├── scripts/        # Plugin-level scripts (status-line.sh, capture-prompt.sh)
-│   ├── hooks/          # Plugin-level hooks (UserPromptSubmit, statusLine)
-│   └── commands/       # Installation command
-├── file/               # File storage primitive (R2, S3, local)
-│   ├── agents/         # file-manager agent
-│   └── skills/         # Storage-specific scripts (r2/, s3/)
-└── codex/              # Memory and knowledge management
-    ├── agents/         # sync-manager agent
-    └── skills/         # Sync and memory operations
+├── work/               # Work tracking (GitHub Issues, Jira, Linear)
+│   ├── agents/         # work-manager/agent.yaml
+│   ├── tools/          # 18 tools (issue-creator, comment-creator, etc.)
+│   ├── plugin.json     # Fractary manifest
+│   └── hooks/          # Plugin-level hooks (Claude Code)
+├── repo/               # Source control (GitHub, GitLab, Bitbucket) + worktrees
+│   ├── agents/         # repo-manager/agent.yaml
+│   ├── tools/          # 15 tools (branch-manager, commit-creator, pr-manager, etc.)
+│   ├── plugin.json     # Fractary manifest
+│   ├── scripts/        # Plugin-level scripts
+│   └── hooks/          # Plugin-level hooks (Claude Code)
+├── file/               # File storage (R2, S3, GCS, Google Drive, local)
+│   ├── agents/         # file-manager/agent.yaml
+│   ├── tools/          # 8 tools (upload, download, list, etc.)
+│   └── plugin.json     # Fractary manifest
+├── codex/              # Memory and knowledge management
+│   ├── agents/         # codex-manager/agent.yaml
+│   ├── tools/          # Sync and retrieval tools
+│   └── plugin.json     # Fractary manifest
+├── docs/               # Living documentation management
+│   ├── agents/         # docs-manager/agent.yaml
+│   ├── tools/          # Documentation operation tools
+│   └── plugin.json     # Fractary manifest
+├── logs/               # Operational log management
+│   ├── agents/         # log-manager/agent.yaml
+│   ├── tools/          # Log operation tools
+│   └── plugin.json     # Fractary manifest
+├── spec/               # Specification lifecycle management
+│   ├── agents/         # spec-manager/agent.yaml
+│   ├── tools/          # 7 tools (generator, validator, archiver, etc.)
+│   └── plugin.json     # Fractary manifest
+└── status/             # Custom status line display
+    ├── tools/          # Status line tools
+    └── plugin.json     # Fractary manifest
+```
 
+### Meta Plugins (Claude Code Format)
+
+```
+plugins/
+├── faber-agent/        # Plugin creation tools
+│   ├── .claude-plugin/plugin.json   # Claude Code manifest
+│   ├── agents/         # 7 agents (*.md format)
+│   ├── skills/         # Creation skills (SKILL.md format)
+│   └── commands/       # Creation commands
+└── faber-cloud/        # Cloud infrastructure management
+    ├── .claude-plugin/plugin.json   # Claude Code manifest
+    ├── agents/         # cloud-director.md, infra-manager.md
+    ├── skills/         # Infrastructure skills (SKILL.md format)
+    └── commands/       # Infrastructure commands
+```
+
+### Documentation & Specifications
+
+```
 docs/
-├── standards/          # Plugin development standards
-├── specs/              # Technical specifications
-└── conversations/      # Architecture discussions
+├── standards/          # Plugin development standards (8 files)
+├── guides/             # User guides (7 files)
+├── api/                # API reference (1 file)
+├── examples/           # Example workflows (1 file)
+├── conversations/      # Architecture discussions (1 file)
+└── tutorials/          # Setup tutorials (1 file)
+
+specs/
+├── FORGE-PHASE-3B-faber-agent-definitions.md
+├── SPEC-FORGE-005-REGISTRY-MANIFEST-SYSTEM.md
+├── SPEC-FORGE-007-CLAUDE-TO-FRACTARY-CONVERSION.md
+├── SPEC-FORGE-008-IMPLEMENTATION-PLAN.md
+├── SPEC-00016-sdk-architecture.md
+├── SPEC-00017-work-sdk.md through SPEC-00025-cli-project.md
+└── README.md
+```
+
+### Archive Branches
+
+Old/unconverted content preserved in archive branches:
+- `archive/unconverted-plugins` - faber-article, faber-db, helm, helm-cloud
+- `archive/old-specs-pre-fractary` - 108 historical spec files
+- `archive/old-architecture-docs` - Universal roles framework docs
 ```
 
 ## Working with Plugins

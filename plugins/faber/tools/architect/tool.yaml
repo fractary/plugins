@@ -1,0 +1,121 @@
+name: architect
+type: tool
+description: |
+  FABER Phase 2 - Architect skill responsible for solution design, specification creation,
+  architectural planning, and technical approach. Second phase in FABER workflow.
+
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+      enum:
+        - execute_architect
+      description: Operation to perform (always "execute_architect")
+    work_id:
+      type: string
+      description: FABER work identifier
+    work_type:
+      type: string
+      enum:
+        - feature
+        - bug
+        - chore
+        - patch
+      description: Classified work type from Frame phase
+    work_item:
+      type: object
+      description: Work item details from Frame phase
+    previous_phase_results:
+      type: object
+      description: Results from Frame phase execution
+  required:
+    - operation
+    - work_id
+    - work_type
+
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum:
+        - success
+        - warning
+        - failure
+        - pending_input
+      description: Execution status
+    specification:
+      type: object
+      properties:
+        file_path:
+          type: string
+          description: Path to generated specification file
+        format:
+          type: string
+          description: Specification format (markdown, yaml, etc.)
+        sections:
+          type: array
+          items:
+            type: string
+          description: Specification sections created
+      description: Generated specification details
+    approach:
+      type: string
+      description: Technical approach description
+    components:
+      type: array
+      items:
+        type: string
+      description: Components to create/modify
+    dependencies:
+      type: array
+      items:
+        type: string
+      description: External dependencies identified
+    risks:
+      type: array
+      items:
+        type: string
+      description: Potential risks and concerns
+    messages:
+      type: array
+      items:
+        type: string
+      description: Execution messages
+    errors:
+      type: array
+      items:
+        type: string
+      description: Error messages (if any)
+
+implementation:
+  type: skill-based
+  skill_directory: plugins/faber/skills/architect
+  workflow_file: workflow/basic.md
+  scripts_directory: scripts
+  execution_pattern: |
+    The architect skill follows a skill-based execution pattern:
+    1. Load workflow implementation from workflow/basic.md
+    2. Execute steps defined in workflow:
+       - Analyze requirements from Frame phase
+       - Research existing codebase patterns
+       - Design technical approach
+       - Create/refine specification
+       - Identify dependencies and risks
+       - Update session state
+       - Post architect complete notification
+    3. Return structured result with specification and design details
+
+  handler: fractary-faber-plugin
+  function: execute_architect_skill
+
+version: "2.0.0"
+author: "Fractary FABER Team"
+tags:
+  - faber
+  - workflow
+  - architect
+  - phase-2
+  - design
+  - specification
