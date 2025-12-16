@@ -1,0 +1,80 @@
+---
+name: faber-executor
+type: tool
+description: 'FABER execution engine - orchestrates workflow steps, manages phase
+  transitions,
+
+  and coordinates skill invocations.
+
+  '
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+      enum:
+      - execute_step
+      - execute_phase
+      - execute_workflow
+      description: Execution operation to perform
+    workflow:
+      type: object
+      description: Resolved workflow definition
+    run_id:
+      type: string
+      description: Run identifier
+    phase:
+      type: string
+      description: Phase to execute (for execute_phase operation)
+    step:
+      type: object
+      description: Step to execute (for execute_step operation)
+  required:
+  - operation
+  - run_id
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+      enum:
+      - success
+      - warning
+      - failure
+      - pending_input
+      description: Execution status
+    result:
+      type: object
+      description: Execution result data
+    next_action:
+      type: string
+      enum:
+      - continue
+      - retry
+      - stop
+      - prompt
+      description: Recommended next action
+    messages:
+      type: array
+      items:
+        type: string
+      description: Execution messages
+implementation:
+  type: skill-based
+  skill_directory: plugins/faber/skills/faber-executor
+  scripts_directory: scripts
+  handler: fractary-faber-plugin
+  function: faber_executor_operation
+version: 2.0.0
+author: Fractary FABER Team
+tags:
+- faber
+- execution
+- orchestration
+- workflow
+- infrastructure
+---
+
+# Faber Executor
+
+Utility tool with no system prompt.

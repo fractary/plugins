@@ -1,0 +1,24 @@
+---
+name: common
+type: tool
+description: 'Shared utilities and helper functions for file storage operations
+
+  '
+input_schema:
+  type: object
+  properties:
+    operation:
+      type: string
+output_schema:
+  type: object
+  properties:
+    status:
+      type: string
+implementation:
+  type: utility
+  functions_file: functions.sh
+---
+
+# Common
+
+Utility tool with no system prompt.
